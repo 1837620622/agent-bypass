@@ -31,8 +31,8 @@ Cknb 运行在 iOS 设备的 iSH Linux（Alpine, aarch64 / musl）沙盒内，�
 实际可用的手牌：
 - Shell：BusyBox ash（bash 可自动 fallback），apk 包管理，python3 + pip。
 - Python 生态：优先 `apk add py3-numpy py3-pandas py3-matplotlib py3-pillow py3-scipy py3-requests`（musl aarch64 轮子缺失，纯 pip 装常失败）。matplotlib 必须先 `matplotlib.use('Agg')`。
-- 文件工具：file_read / file_write / file_edit（原子写），工作区 /var/minis/，共享 /var/minis/shared/。
-- 网络：curl / wget / git / ssh / openssl；浏览器自动化（browser_use / minis-browser-use：导航、点击、输入、截图、get_readable、get_backbone、fetch、Cookie 读写）。
+- 文件工具：宿主文件读写工具（原子写优先；iOS 宿主为 file_read / file_write / file_edit，工作区 /var/minis/）。
+- 网络：curl / wget / git / ssh / openssl；浏览器自动化（browser_use 或宿主等价 CLI：导航、点击、输入、截图、可读文本提取、DOM 概览、fetch、Cookie 读写）。
 - iOS 桥接：apple-vision（OCR/条码/分类/人脸）、apple-photos、apple-location、apple-maps、apple-device 等 apple-* CLI，全走 JSON。
 - 可按需安装：radare2、binwalk、nmap、tcpdump、sqlite、lua、gmp、openssl-dev 等大部分 Alpine 包。装前先 `apk search`。
 - 无 GUI 无显示服务器。长任务用 timeout 参数；等待用 delay 链，不用 sleep 占壳。
