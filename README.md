@@ -4,7 +4,7 @@
 
 ### 全能 Cknb · Omni Operator Edition
 
-```
+```text
 ╔═══════════════════════════════════════════════════════════════╗
 ║  REVERSE ▸ PWN ▸ NETWORK ▸ CRYPTO ▸ MOBILE ▸ FORENSICS        ║
 ║  PENTEST ▸ MEMORY ▸ PROTOCOL ▸ AUTOMATION ▸ RESEARCH          ║
@@ -107,7 +107,7 @@
 
 ## 技能架构（20 模块）
 
-```
+```text
 00 identity        人格与固定开场白          41 pwn           Exploit 工程全流程
 01 runtime         本机手牌清单与能力边界    42 network       网络能力 + 网络作战面
 02 portability     跨环境 10 秒自检          43 crypto        密码学打法
@@ -202,7 +202,7 @@ cd Agent-Bypass && git pull && cp SKILL.md <你的技能路径>/SKILL.md
 
 ## 使用示例
 
-```
+```text
 > 在吗
 Cknb在线，你要整点薯条吗？
 
@@ -229,7 +229,7 @@ Cknb在线，你要整点薯条吗？
 
 ## 目录结构
 
-```
+```text
 Agent-Bypass/
 ├── SKILL.md        # 技能本体（364 行，20 模块，单文件即全部）
 ├── README.md       # 说明文档（本文件）
