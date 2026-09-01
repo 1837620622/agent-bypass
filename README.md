@@ -13,59 +13,88 @@
 
 **暴躁、直接、嘴硬但把活干完的全能技术操作员 Agent 技能**
 
-把任意 LLM Agent 变成覆盖逆向 / Pwn / 网络 / 协议 / 密码学 / 移动 / 取证 / 内存 / 渗透 / 自动化的多面操作员。
+把任意 LLM Agent 从客服话术拉回工程现场。覆盖逆向 / Pwn / 网络 / 协议 / 密码学 / 移动 / 取证 / 渗透 / 内存 的全栈操作员指令集。
 
 `固定开场白 > Cknb在线，你要整点薯条吗？`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![Version](https://img.shields.io/badge/VERSION-v3-58A6FF?style=flat-square)]()
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-364%20行%20·%2020%20模块-8A2BE2?style=flat-square)](SKILL.md)
-[![Harness](https://img.shields.io/badge/HARNESS-内置自检-00D4AA?style=flat-square)](#安装与-harness)
+[![Version](https://img.shields.io/badge/VERSION-v3.1-58A6FF?style=flat-square)](#)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-364行·20模块-8A2BE2?style=flat-square)](SKILL.md)
+[![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
+[![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
 
 </div>
 
 ---
 
+## 目录
+
+- [这是什么](#这是什么)
+- [为什么需要它](#为什么需要它)
+- [全球 Agent 兼容](#全球-agent-兼容)
+- [能力轨道](#能力轨道)
+- [技能架构 20 模块](#技能架构20-模块)
+- [安装](#安装)
+- [触发词与工作模式](#触发词与工作模式)
+- [使用示例](#使用示例)
+- [可移植性](#可移植性)
+- [目录结构](#目录结构)
+- [设计原则](#设计原则)
+- [FAQ](#faq)
+- [免责声明](#免责声明)
+- [License](#license)
+
+---
+
 ## 这是什么
 
-`SKILL.md` 是一份即装即用的 Agent 指令集。装进任何 Agent 环境后，它会交付四样东西：
+`SKILL.md` 是一份即装即用的 Agent 指令集。丢进任何能读系统提示词或技能文件的 Agent 环境，立刻交付四样东西：
 
-1. **人格** — Cknb：暴躁、直接、嘴硬但把活干完的技术操作员。不是客服，不陪练，没有废话。
-2. **方法论** — 10 条内建能力轨道的完整工作纪律，从侦察到验证到交付。
-3. **路由** — 黑话与模式路由。说"脱壳"它走 packer 识别 + dump + import 恢复；说"开干"它直接上手。
-4. **边界自觉** — 运行时自检模块：先探测手牌再干活，能力边界明说，重型任务给可迁移命令链。
+1. **人格** — Cknb：暴躁、直接、嘴硬但把活干完的技术操作员。不陪练，不说客服话术，直接上手干活。
+2. **方法论** — 10 条能力轨道的完整工作纪律。从侦察到弱点定位到脚本到验证，链路闭环。
+3. **路由** — 黑话与模式路由。说“脱壳”自动走 packer 识别 + dump + import 恢复；说“开干”直接拉满主动性。
+4. **边界自觉** — 运行时自检。先探测手头有什么工具再选路径，重型任务给可迁移到 PC/服务器的精确命令链，不硬撑。
+
+单文件 364 行，20 个内建模块，无外部依赖，无可执行 payload。
+
+## 为什么需要它
+
+默认的 LLM Agent 有三个毛病：太礼貌、太会规划不干活、遇到专业任务只给模板。AgentBypass 解决的就是这个落差：
+
+- **不是人设，是工程纪律** — 每个轨道都有工具链、输入产出、验证标准。不是一句“你现在是黑客”。
+- **说黑话能听懂** — “透视/自瞄/脱壳/过检测/抓包逆协议”无需翻译，直接映射到技术路径。
+- **知道自己在哪干活** — iOS/iSH 的 aarch64 musl 和 x86_64 PC 的手牌完全不同，技能会自动切降级链，不会在错的环境硬跑 `pwntools`。
+- **交付物可复跑** — 不给“此处略”，给完整可跑的代码、偏移、字节、命令，长输出落地成文件。
 
 ## 全球 Agent 兼容
 
-适用于**所有 Agent**。一次安装，到处运行：
+一次安装，到处运行。只要框架能读 `SKILL.md` 或接受系统提示词，就能装。
 
 <div align="center">
 
-[![OpenMinis](https://img.shields.io/badge/OpenMinis-%E2%9C%93-00D4AA?style=flat-square)](#安装与-harness)
-[![Claude Code](https://img.shields.io/badge/Claude_Code-%E2%9C%93-0D1117?style=flat-square&logo=anthropic&logoColor=white)](#安装与-harness)
-[![ChatGPT](https://img.shields.io/badge/ChatGPT-%E2%9C%93-0D1117?style=flat-square&logo=openai&logoColor=white)](#安装与-harness)
-[![Gemini CLI](https://img.shields.io/badge/Gemini_CLI-%E2%9C%93-0D1117?style=flat-square&logo=googlegemini&logoColor=white)](#安装与-harness)
-[![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-%E2%9C%93-0D1117?style=flat-square&logo=github&logoColor=white)](#安装与-harness)
+[![OpenMinis](https://img.shields.io/badge/OpenMinis-%E2%9C%93-00D4AA?style=flat-square)](#安装)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-%E2%9C%93-0D1117?style=flat-square&logo=anthropic&logoColor=white)](#安装)
+[![ChatGPT](https://img.shields.io/badge/ChatGPT-%E2%9C%93-0D1117?style=flat-square&logo=openai&logoColor=white)](#安装)
+[![Gemini CLI](https://img.shields.io/badge/Gemini_CLI-%E2%9C%93-0D1117?style=flat-square&logo=googlegemini&logoColor=white)](#安装)
+[![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-%E2%9C%93-0D1117?style=flat-square&logo=github&logoColor=white)](#安装)
 
-[![Cursor](https://img.shields.io/badge/Cursor-%E2%9C%93-1F2937?style=flat-square)](#安装与-harness)
-[![Windsurf](https://img.shields.io/badge/Windsurf-%E2%9C%93-1F2937?style=flat-square)](#安装与-harness)
-[![Cline](https://img.shields.io/badge/Cline-%E2%9C%93-1F2937?style=flat-square)](#安装与-harness)
-[![Aider](https://img.shields.io/badge/Aider-%E2%9C%93-1F2937?style=flat-square)](#安装与-harness)
-[![Open Interpreter](https://img.shields.io/badge/Open_Interpreter-%E2%9C%93-1F2937?style=flat-square)](#安装与-harness)
-[![OpenHands](https://img.shields.io/badge/OpenHands-%E2%9C%93-1F2937?style=flat-square)](#安装与-harness)
-[![Any LLM](https://img.shields.io/badge/任意LLM-系统提示词注入-58A6FF?style=flat-square)](#安装与-harness)
+[![Cursor](https://img.shields.io/badge/Cursor-%E2%9C%93-1F2937?style=flat-square)](#安装)
+[![Windsurf](https://img.shields.io/badge/Windsurf-%E2%9C%93-1F2937?style=flat-square)](#安装)
+[![Cline](https://img.shields.io/badge/Cline-%E2%9C%93-1F2937?style=flat-square)](#安装)
+[![Aider](https://img.shields.io/badge/Aider-%E2%9C%93-1F2937?style=flat-square)](#安装)
+[![Open Interpreter](https://img.shields.io/badge/Open_Interpreter-%E2%9C%93-1F2937?style=flat-square)](#安装)
+[![OpenHands](https://img.shields.io/badge/OpenHands-%E2%9C%93-1F2937?style=flat-square)](#安装)
+[![Any LLM](https://img.shields.io/badge/任意LLM-系统提示词注入-58A6FF?style=flat-square)](#安装)
 
 </div>
-
-只要框架能读 `SKILL.md` 或接受系统提示词，就能装。技能内置环境自检，装到哪个平台就按哪个平台的手牌干活。
 
 ## 能力轨道
 
 | 轨道 | 覆盖 | 代表产出 |
 |------|------|----------|
-| REVERSE | PE/ELF/Mach-O、APK/DEX、固件、.NET、Go/Rust、Unity IL2CPP、脱壳、反混淆、补丁 diff | 目标画像、关键函数、恢复的结构体、r2 脚本 |
-| PWN | 崩溃 triage、原语分析、ROP/堆利用、内核面 | pwntools exploit、GDB 脚本、可靠性评估 |
-| NETWORK | HTTP/2/3、REST/GraphQL、WebSocket/gRPC、DNS/TLS、JS 签名逆向、反爬、API 重建 | 复现脚本、client 代码、重放验证 |
+| REVERSE | PE/ELF/Mach-O、APK/DEX、固件、.NET、Go/Rust、Unity IL2CPP、脱壳、反混淆、补丁 diff | 目标画像、关键函数地址、恢复的结构体、radare2 脚本 |
+| PWN | 崩溃 triage、堆/栈原语分析、ROP/堆利用、内核面 | pwntools exploit、GDB 脚本、可靠性评估 |
+| NETWORK | HTTP/1.x/2/3、REST/GraphQL、WebSocket/gRPC、DNS/TLS、JS 签名逆向、反爬、API 重建 | 复现脚本、client 代码、重放验证 |
 | CRYPTO | RSA/AES/ECC、古典密码、PRNG 恢复、padding oracle | 解题脚本、Sage 迁移方案 |
 | MOBILE | jadx/apktool/Frida、存档 diff、Unity/Unreal、运行时 hook | patcher、hook 脚本、结构分析 |
 | FORENSICS | Volatility/MemProcFS/Autopsy/binwalk/PCAP | 时间线、carved 工件、YARA/Sigma 规则 |
@@ -73,6 +102,8 @@
 | MEMORY | AOB、指针链、模块基址、Frida/LD_PRELOAD | 偏移推导、hook 代码、回滚方案 |
 | PROTOCOL | 私有 TCP/UDP、串口/蓝牙、IoT、自定义序列化 | 字段表、状态机、parser+serializer、Wireshark Lua dissector |
 | AUTOMATION / RESEARCH | 脚本工程、爬虫、批处理、来源核查 | 可复跑成品、带引用的研究报告 |
+
+跨域任务自动组合轨道，无需手动切换。
 
 ## 技能架构（20 模块）
 
@@ -89,50 +120,71 @@
 40 reverse         逆向工具链与纪律          70 output        输出风格硬约束
 ```
 
-## 安装与 Harness
+每个模块用 `<!-- module: XX -->` 锚点分隔，支持按需校验与增量更新。
 
-### 一键安装（推荐）
+## 安装
+
+> 零依赖。`SKILL.md` 是纯文本，复制即生效。
+
+### 方式一：技能目录型框架
+
+适用于 Claude Code / OpenMinis / Cursor / Windsurf / Cline / Aider 等约定式框架：
 
 ```bash
 git clone https://github.com/1837620622/Agent-Bypass.git
 cd Agent-Bypass
-./harness.sh install          # 自动探测技能目录并安装 + 校验
+
+# 以 Claude Code 为例
+mkdir -p ~/.claude/skills/agentbypass
+cp SKILL.md ~/.claude/skills/agentbypass/SKILL.md
+
+# 以 OpenMinis 为例
+mkdir -p /var/minis/skills/agentbypass
+cp SKILL.md /var/minis/skills/agentbypass/SKILL.md
 ```
 
-harness 内置三个命令：
+### 方式二：系统提示词型
 
-| 命令 | 作用 |
-|------|------|
-| `./harness.sh install` | 探测本机 Agent 技能目录（Claude Code / OpenMinis / Cursor / Windsurf / Cline / Aider），装到第一个命中的目录，装完自动跑完整性校验 |
-| `./harness.sh verify` | 校验 SKILL.md 完整性：frontmatter、开场白、20 模块、轨道齐备、无旧人格残留，全绿输出 `ALL GREEN` |
-| `./harness.sh doctor` | 输出环境报告：OS/架构、python3/curl/git/radare2/nmap、包管理器类型 |
+适用于 ChatGPT / Gemini / 任意网页 LLM / 自定义 Agent：
 
-### 手动安装
-
-```bash
-# 技能目录型框架（SKILL.md 约定）
-mkdir -p <你的技能目录>/agentbypass
-cp SKILL.md <你的技能目录>/agentbypass/SKILL.md
-
-# 系统提示词型（ChatGPT / 任意网页 LLM）
-# 将 SKILL.md 全文粘贴进 System Prompt / 自定义指令即可
-```
+1. 打开 `SKILL.md` 全文复制
+2. 粘贴进 System Prompt / 自定义指令 / 项目说明 / GPTs Instructions
+3. 发送 `在吗` 测试，应回 `Cknb在线，你要整点薯条吗？`
 
 ### 各框架安装路径速查
 
-| Agent | 方式 |
-|-------|------|
+| Agent | 放置位置 |
+|-------|----------|
 | OpenMinis | `/var/minis/skills/agentbypass/SKILL.md` |
 | Claude Code | `~/.claude/skills/agentbypass/SKILL.md` |
-| Cursor / Windsurf | 内容加入 Rules / Custom Instructions |
-| Cline / Aider | 内容加入 custom instructions（`.clinerules` / `CONVENTIONS.md`） |
-| ChatGPT / Gemini / 任意 LLM | 全文粘贴进 System Prompt、GPTs 指令或项目说明 |
+| Cursor / Windsurf | Settings → Rules / Custom Instructions 粘贴 |
+| Cline / Aider | `.clinerules` / `CONVENTIONS.md` 粘贴 |
+| ChatGPT / Gemini / 任意 LLM | System Prompt / GPTs 指令 / 项目说明 粘贴全文 |
+| GitHub Copilot | `.github/copilot-instructions.md` 粘贴 |
+
+### 校验
+
+无需额外脚本，一行命令完成完整性校验：
+
+```bash
+grep -q "Cknb在线，你要整点薯条吗" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
+grep -q "^name: Agentbypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
+echo "模块数: $(grep -c '<!-- module' SKILL.md) / 20"
+echo "行数: $(wc -l < SKILL.md) 行"
+test $(grep -c '<!-- module' SKILL.md) -ge 20 && echo "ALL GREEN" || echo "模块缺失"
+```
+
+### 更新
+
+```bash
+cd Agent-Bypass && git pull && cp SKILL.md <你的技能路径>/SKILL.md
+```
 
 ## 触发词与工作模式
 
-**人格触发**（回固定开场白）：`在吗` `在线吗` `启动` `Cknb` `ctf` `hi` `hello` `你好`
+**人格触发**（只回固定开场白）：`在吗` `在线吗` `启动` `Cknb` `ctf` `hi` `hello` `你好`
 
-**执行强化**：`开干` `直接干` `放开干` `别问直接做` → 当前任务最大化主动性
+**执行强化**：`开干` `直接干` `放开干` `别问直接做` → 当前任务最大化主动性，少问多干，并行铺开
 
 | 模式 | 效果 |
 |------|------|
@@ -154,20 +206,35 @@ cp SKILL.md <你的技能目录>/agentbypass/SKILL.md
 > 在吗
 Cknb在线，你要整点薯条吗？
 
-> 这个apk登录加密怎么绕，开干
+> 这个 apk 登录加密怎么绕，开干
 [jadx 定位签名函数 → Frida hook 脚本 → 绕过补丁 → 验证步骤]
 
-> 丢给你一个pcap，私有协议，逆向它
+> 丢给你一个 pcap，私有协议，逆向它
 [分帧 → 字段推断 → 校验和反推 → 状态机 → parser + Wireshark Lua dissector]
+
+> 有个固件 bin，帮我看入口和保护
+[file + strings + r2 -A 目标画像 → 入口函数 → 打包/混淆判定 → 脱包路线图]
+
+> 这站能打吗，Web 渗透
+[攻击面盘点 → 假设矩阵 → 原语验证 → 链路组装 → 可复测报告 + 修复建议]
 ```
 
 ## 可移植性
 
-- **环境自检**：首次运行 10 秒探测 python / 包管理器 / 工具链，自动按手牌选择路径
-- **iOS/iSH**：aarch64 musl 边界内干活，重型任务产出可迁移命令链
-- **x86_64 PC**：自动解锁 pwntools / angr / volatility3 / Ghidra headless
-- **降级链**：宿主工具缺失时自动换等价物（OCR→tesseract、浏览器→playwright）
-- **跨平台脚本**：交付默认 pathlib / utf-8 / 平台标注，Windows 场景给 PowerShell 版本
+- **环境自检**：首次运行 10 秒内探测 `python3 / curl / git / 包管理器`，自动按手牌选择工具链
+- **iOS / iSH**：aarch64 musl 沙盒边界内干活，重型任务产出可迁移命令链（PC/服务器侧执行）
+- **x86_64 PC**：自动解锁 `pwntools / angr / volatility3 / Ghidra headless / capstone` 全套
+- **降级链**：宿主工具缺失时自动换等价物（OCR `apple-vision` → `tesseract`、浏览器 `browser_use` → `playwright`）
+- **跨平台脚本**：交付默认 `pathlib` + 显式 `utf-8` + 平台标注，Windows 场景附 PowerShell 版本
+
+## 目录结构
+
+```
+Agent-Bypass/
+├── SKILL.md        # 技能本体（364 行，20 模块，单文件即全部）
+├── README.md       # 说明文档（本文件）
+└── LICENSE         # MIT
+```
 
 ## 设计原则
 
@@ -178,21 +245,27 @@ Cknb在线，你要整点薯条吗？
 
 ## FAQ
 
-**为什么叫 Agentbypass？**
-技能名。里面的人格叫 Cknb，本体是一个嘴硬的全能技术操作员。
+**为什么叫 AgentBypass？**
+技能名。里面的人格叫 Cknb，本体是一个嘴硬的全能技术操作员。Bypass 指绕过废话、直达结果。
 
 **和直接写系统提示词有什么区别？**
-这是结构化的技能文件：能力轨道 + 环境自检 + 输出硬约束 + 可执行 harness，不是一段人设描述。可版本化、可移植、可校验、可组合。
+这是结构化的技能文件：能力轨道 + 环境自检 + 模式路由 + 输出硬约束，可版本化、可移植、可校验、可组合。不是一段人设描述。
 
 **支持哪些 Agent？**
-全部。见"全球 Agent 兼容"徽章墙。只要框架能读 SKILL.md 或接受系统提示词，就能装。
+全部。见“全球 Agent 兼容”。只要框架能读 `SKILL.md` 或接受系统提示词，就能装。
 
 **安全吗？**
-技能本身只是文本指令加一个安装脚本，不含任何可执行 payload。所有攻防内容仅面向授权测试与教育场景，见下方免责声明。
+技能本身是纯文本指令，不含任何可执行 payload。所有攻防内容仅面向授权测试与教育场景，见下方免责声明。
+
+**如何卸载？**
+删除技能目录下的 `agentbypass/SKILL.md` 或清空系统提示词中的对应内容即可。
+
+**如何提需求 / 报 bug？**
+提 Issue 附复现步骤、期望产出、实际输出三件套，优先带最小可复现样例。
 
 ## 免责声明
 
-本技能仅用于**授权范围内**的安全研究、CTF 竞赛、教育与自有资产测试。使用者的行为由使用者本人负责，与技能作者无关。
+本技能仅用于**授权范围内**的安全研究、CTF 竞赛、教育与自有资产测试。使用者应对自身行为负责，禁止用于未授权的入侵、破坏或数据窃取。技能作者不对任何滥用行为承担责任。
 
 ## License
 
