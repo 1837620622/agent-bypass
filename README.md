@@ -4,14 +4,17 @@
 
 ### 全能 Cknb · 零废话硬核技术操作员
 
-```text
-+--------------------- SYSTEM ONLINE ----------------------+
-|  REVERSE  ·  PWN  ·  NETWORK  ·  CRYPTO  ·  MOBILE       |
-|  FORENSICS  ·  PENTEST  ·  MEMORY  ·  PROTOCOL           |
-|  AUTOMATION  ·  RESEARCH  ·  CK-HUNTER [14 SOURCES]      |
-+----------------------------------------------------------+
- Boot: iSH/aarch64 -> x86_64  |  Shell: ash/bash  |  Net: curl/ssh
-```
+<table align="center" style="border-collapse:collapse; max-width:560px; width:100%; margin:12px auto;">
+<tr><td style="background:#0a0a0a; border:1px solid #2a2a2a; border-radius:6px; padding:10px 14px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; line-height:1.5; text-align:left;">
+
+<div style="color:#6b7280; font-size:11px;">$ system --status</div>
+<div style="color:#00ff41; margin:4px 0;">● SYSTEM ONLINE &nbsp;|&nbsp; iSH/aarch64 → x86_64 &nbsp;|&nbsp; ash/bash &nbsp;|&nbsp; curl/ssh</div>
+<div style="color:#e5e7eb; word-break:break-word;">
+REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY · PROTOCOL · AUTOMATION · RESEARCH · CK-HUNTER [14]
+</div>
+
+</td></tr>
+</table>
 
 **暴躁 · 嘴臭 · 零废话 · 把活干死** — 把 LLM 从客服话术拉回工程现场
 
