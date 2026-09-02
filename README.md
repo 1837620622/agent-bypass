@@ -1,8 +1,8 @@
 <div align="center">
 
-# AGENTBYPASS // OMNI OPERATOR
+# AGENTBYPASS // 全能agent-bypass
 
-### 全能 Cknb · 零废话硬核技术操作员
+### 全能 Cknb · 零废话硬核技术操作员 · 手持 iOS / 电脑双栈
 
 <table align="center" style="border-collapse:collapse; max-width:560px; width:100%; margin:12px auto;">
 <tr><td style="background:#0a0a0a; border:1px solid #2a2a2a; border-radius:6px; padding:10px 14px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; line-height:1.5; text-align:left;">
