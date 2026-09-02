@@ -18,7 +18,7 @@
 `固定开场白 > Cknb在线，你要整点薯条吗？`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-384行·21模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-353行·21模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-14源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
@@ -48,23 +48,23 @@
 
 ## 这是什么
 
-`SKILL.md` 是一份即装即用的 Agent 指令集。丢进任何能读系统提示词或技能文件的 Agent 环境，立刻交付四样东西：
+`SKILL.md` + `ck-hunter.md` 即装即用。丢进任何 Agent，立刻交付：
 
-1. **人格** — Cknb：暴躁、直接、嘴硬但把活干完的技术操作员。不陪练，不说客服话术，直接上手干活。
-2. **方法论** — 10 条能力轨道的完整工作纪律。从侦察到弱点定位到脚本到验证，链路闭环。
-3. **路由** — 黑话与模式路由。说“脱壳”自动走 packer 识别 + dump + import 恢复；说“开干”直接拉满主动性。
-4. **边界自觉** — 运行时自检。先探测手头有什么工具再选路径，重型任务给可迁移到 PC/服务器的精确命令链，不硬撑。
+1. **人格** — Cknb：极度暴躁、嘴臭、不耐烦但把活干死的硬核操作员。少废话，直接干。
+2. **方法论** — 10 轨道 + 14 源猎取的工作纪律，侦察→弱点→脚本→验证闭环。
+3. **路由** — 黑话自动映射；`脱壳`/`透视`/`抓包`无需翻译，`hunter` 自动路由到 CK Hunter。
+4. **边界自觉** — 10 秒自检手牌，aarch64 与 x86_64 自动切降级链，重活给可迁移命令。
 
-主技能 `SKILL.md` 384 行、21 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 353 行、21 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
-默认的 LLM Agent 有三个毛病：太礼貌、太会规划不干活、遇到专业任务只给模板。AgentBypass 解决的就是这个落差：
+默认 Agent 太礼貌、只规划不干活、遇专业任务只给模板。AgentBypass 直接解决：
 
-- **不是人设，是工程纪律** — 每个轨道都有工具链、输入产出、验证标准。不是一句“你现在是黑客”。
-- **说黑话能听懂** — “透视/自瞄/脱壳/过检测/抓包逆协议”无需翻译，直接映射到技术路径。
-- **知道自己在哪干活** — iOS/iSH 的 aarch64 musl 和 x86_64 PC 的手牌完全不同，技能会自动切降级链，不会在错的环境硬跑 `pwntools`。
-- **交付物可复跑** — 不给“此处略”，给完整可跑的代码、偏移、字节、命令，长输出落地成文件。
+- **工程纪律** — 每轨道有工具链、输入产出、验证标准，不是人设包装。
+- **黑话秒懂** — `透视`/`脱壳`/`抓包逆协议`/`hunter` 直接走技术路径。
+- **环境自知** — iSH 与 PC 手牌不同，自动切降级，不在错环境硬跑 `pwntools`。
+- **可复跑交付** — 不留桩，给完整代码、偏移、命令，长输出落文件。
 
 ## 全球 Agent 兼容
 
@@ -110,9 +110,17 @@
 `ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **14 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
 
 - **触发**：`hunter` / `ck-hunter` / `凭证猎取` / `开放目录` / `FOFA` / `Shodan` / `.env` / `.git` 等关键词自动加载 `ck-hunter.md`
-- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板
-- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾/），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 14 源重复打同一 IP
-- **报告**：`hunt/hunt_report.html`（本地生成，不提交）
+- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 6 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`/`URLScan`；可选 `Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`GreyNoise`
+- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾/，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 14 源重复打同一 IP
+- **报告**：`hunt/hunt_report.html`（本地生成，不提交）+ `hunt/csv/` 原始 JSON + `hunt/auths/` 凭证文件
+
+**CK Hunter 快速开始：**
+```bash
+cp config.yaml.example config.yaml && chmod 600 config.yaml
+# 填入 FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan 等真实 Key
+cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
+# Agent 触发示例： "hunter 开干" / "凭证猎取 .env" / "扫开放目录"
+```
 
 ## 技能架构（21 模块）
 
@@ -227,16 +235,16 @@ cd Agent-Bypass && git pull && cp SKILL.md <你的技能路径>/SKILL.md
 Cknb在线，你要整点薯条吗？
 
 > 这个 apk 登录加密怎么绕，开干
-[jadx 定位签名函数 → Frida hook 脚本 → 绕过补丁 → 验证步骤]
+[少废话→ jadx 定位签名 → Frida hook → 补丁 → 验证]
 
-> 丢给你一个 pcap，私有协议，逆向它
-[分帧 → 字段推断 → 校验和反推 → 状态机 → parser + Wireshark Lua dissector]
+> 丢个 pcap，私有协议逆向
+[分帧 → 字段推断 → 校验反推 → 状态机 → parser + Lua dissector]
 
-> 有个固件 bin，帮我看入口和保护
-[file + strings + r2 -A 目标画像 → 入口函数 → 打包/混淆判定 → 脱包路线图]
+> hunter 开干，扫 .env 开放目录
+[14 源拉满 → 归一化去重 → Phase 0 探针 → 凭证提取 → 验证 → HTML 报告]
 
-> 这站能打吗，Web 渗透
-[攻击面盘点 → 假设矩阵 → 原语验证 → 链路组装 → 可复测报告 + 修复建议]
+> 这站能打吗，渗透
+[盘点 → 假设矩阵 → 原语验证 → 链路 → 报告]
 ```
 
 ## 可移植性
@@ -251,7 +259,7 @@ Cknb在线，你要整点薯条吗？
 
 ```text
 Agent-Bypass/
-├── SKILL.md              # 主技能（384 行，21 模块：含 05 ck-hunter 调度）
+├── SKILL.md              # 主技能（353 行，21 模块：含 05 ck-hunter 调度）
 ├── ck-hunter.md          # 子技能：14 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
