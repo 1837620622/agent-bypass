@@ -1,24 +1,24 @@
 <div align="center">
 
-# AGENTBYPASS
+# AGENTBYPASS // OMNI OPERATOR
 
-### 全能 Cknb · Omni Operator Edition
+### 全能 Cknb · 零废话硬核技术操作员
 
 ```text
-╔═══════════════════════════════════════════════════════════════╗
-║  REVERSE ▸ PWN ▸ NETWORK ▸ CRYPTO ▸ MOBILE ▸ FORENSICS        ║
-║  PENTEST ▸ MEMORY ▸ PROTOCOL ▸ AUTOMATION ▸ RESEARCH          ║
-╚═══════════════════════════════════════════════════════════════╝
+┌─ SYSTEM ONLINE ──────────────────────────────────────────┐
+│  REVERSE  ·  PWN  ·  NETWORK  ·  CRYPTO  ·  MOBILE        │
+│  FORENSICS  ·  PENTEST  ·  MEMORY  ·  PROTOCOL            │
+│  AUTOMATION  ·  RESEARCH  ·  CK-HUNTER [14 SOURCES]       │
+└──────────────────────────────────────────────────────────┘
+ Boot: iSH/aarch64 → x86_64  |  Shell: ash/bash  |  Net: curl/ssh
 ```
 
-**暴躁、直接、嘴硬但把活干完的全能技术操作员 Agent 技能**
+**暴躁 · 嘴臭 · 零废话 · 把活干死** — 把 LLM 从客服话术拉回工程现场
 
-把任意 LLM Agent 从客服话术拉回工程现场。覆盖逆向 / Pwn / 网络 / 协议 / 密码学 / 移动 / 取证 / 渗透 / 内存 的全栈操作员指令集。
-
-`固定开场白 > Cknb在线，你要整点薯条吗？`
+`$ cknb --ping` → `Cknb在线，你要整点薯条吗？`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-342行·22模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-354行·22模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-14源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
@@ -55,7 +55,7 @@
 3. **路由** — 黑话自动映射；`脱壳`/`透视`/`抓包`无需翻译，`hunter` 自动路由到 CK Hunter。
 4. **边界自觉** — 10 秒自检手牌，aarch64 与 x86_64 自动切降级链，重活给可迁移命令。
 
-主技能 `SKILL.md` 342 行、22 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 354 行、22 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
@@ -194,7 +194,7 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 ```bash
 grep -q "Cknb在线，你要整点薯条吗" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
 grep -q "^name: Agentbypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
-echo "模块数: $(grep -c '<!-- module' SKILL.md) / 21"
+echo "模块数: $(grep -c '<\!-- module' SKILL.md) / 22"
 echo "行数: $(wc -l < SKILL.md) 行"
 test $(grep -c '<!-- module' SKILL.md) -ge 21 && echo "ALL GREEN" || echo "模块缺失"
 # CK Hunter 子技能校验
@@ -259,7 +259,7 @@ Cknb在线，你要整点薯条吗？
 
 ```text
 Agent-Bypass/
-├── SKILL.md              # 主技能（342 行，22 模块：含 05 ck-hunter 调度）
+├── SKILL.md              # 主技能（354 行，22 模块：含 05 ck-hunter 调度）
 ├── ck-hunter.md          # 子技能：14 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
