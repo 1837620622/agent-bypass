@@ -5,12 +5,12 @@
 ### 全能 Cknb · 零废话硬核技术操作员
 
 ```text
-┌─ SYSTEM ONLINE ──────────────────────────────────────────┐
-│  REVERSE  ·  PWN  ·  NETWORK  ·  CRYPTO  ·  MOBILE        │
-│  FORENSICS  ·  PENTEST  ·  MEMORY  ·  PROTOCOL            │
-│  AUTOMATION  ·  RESEARCH  ·  CK-HUNTER [14 SOURCES]       │
-└──────────────────────────────────────────────────────────┘
- Boot: iSH/aarch64 → x86_64  |  Shell: ash/bash  |  Net: curl/ssh
++--------------------- SYSTEM ONLINE ----------------------+
+|  REVERSE  ·  PWN  ·  NETWORK  ·  CRYPTO  ·  MOBILE       |
+|  FORENSICS  ·  PENTEST  ·  MEMORY  ·  PROTOCOL           |
+|  AUTOMATION  ·  RESEARCH  ·  CK-HUNTER [14 SOURCES]      |
++----------------------------------------------------------+
+ Boot: iSH/aarch64 -> x86_64  |  Shell: ash/bash  |  Net: curl/ssh
 ```
 
 **暴躁 · 嘴臭 · 零废话 · 把活干死** — 把 LLM 从客服话术拉回工程现场
