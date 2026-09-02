@@ -18,8 +18,8 @@
 `固定开场白 > Cknb在线，你要整点薯条吗？`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![Version](https://img.shields.io/badge/VERSION-v3.1-58A6FF?style=flat-square)](#)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-364行·20模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-384行·21模块-8A2BE2?style=flat-square)](SKILL.md)
+[![ck-hunter](https://img.shields.io/badge/ck--hunter-14源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
 
@@ -33,7 +33,7 @@
 - [为什么需要它](#为什么需要它)
 - [全球 Agent 兼容](#全球-agent-兼容)
 - [能力轨道](#能力轨道)
-- [技能架构 20 模块](#技能架构20-模块)
+- [技能架构 21 模块](#技能架构21-模块)
 - [安装](#安装)
 - [触发词与工作模式](#触发词与工作模式)
 - [使用示例](#使用示例)
@@ -55,7 +55,7 @@
 3. **路由** — 黑话与模式路由。说“脱壳”自动走 packer 识别 + dump + import 恢复；说“开干”直接拉满主动性。
 4. **边界自觉** — 运行时自检。先探测手头有什么工具再选路径，重型任务给可迁移到 PC/服务器的精确命令链，不硬撑。
 
-单文件 364 行，20 个内建模块，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 384 行、21 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
@@ -105,22 +105,33 @@
 
 跨域任务自动组合轨道，无需手动切换。
 
-## 技能架构（20 模块）
+## CK Hunter 子技能
+
+`ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **14 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
+
+- **触发**：`hunter` / `ck-hunter` / `凭证猎取` / `开放目录` / `FOFA` / `Shodan` / `.env` / `.git` 等关键词自动加载 `ck-hunter.md`
+- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板
+- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾/），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 14 源重复打同一 IP
+- **报告**：`hunt/hunt_report.html`（本地生成，不提交）
+
+## 技能架构（21 模块）
 
 ```text
 00 identity        人格与固定开场白          41 pwn           Exploit 工程全流程
 01 runtime         本机手牌清单与能力边界    42 network       网络能力 + 网络作战面
 02 portability     跨环境 10 秒自检          43 crypto        密码学打法
 04 tracks          10 轨道 + 模式路由        44 mobile        移动/游戏/应用分析
-06 autonomy        高主动性执行模式          45 forensics     取证与样本分析
-08 dual-use        专业双用工作模式          46 pentest       渗透测试纪律
-10 persona         人格稳定性规则            47 memory        内存工程
-20 slang           黑话路由                  48 protocol      协议逆向完整八步
-30 workflow        五步工作流                60 automation    自动化与研究
-40 reverse         逆向工具链与纪律          70 output        输出风格硬约束
+05 ck-hunter       14源凭证猎取子技能        45 forensics     取证与样本分析
+06 autonomy        高主动性执行模式          46 pentest       渗透测试纪律
+08 dual-use        专业双用工作模式          47 memory        内存工程
+10 persona         人格稳定性规则            48 protocol      协议逆向完整八步
+20 slang           黑话路由                  60 automation    自动化与研究
+30 workflow        五步工作流                70 output        输出风格硬约束
+40 reverse         逆向工具链与纪律
 ```
 
 每个模块用 `<!-- module: XX -->` 锚点分隔，支持按需校验与增量更新。
+主技能通过 `05 ck-hunter` 自动路由凭证猎取类请求到 `ck-hunter.md`，详见 [CK Hunter](#ck-hunter-子技能)。
 
 ## 安装
 
@@ -134,13 +145,19 @@
 git clone https://github.com/1837620622/Agent-Bypass.git
 cd Agent-Bypass
 
-# 以 Claude Code 为例
+# 主技能
 mkdir -p ~/.claude/skills/agentbypass
 cp SKILL.md ~/.claude/skills/agentbypass/SKILL.md
+# 子技能（凭证猎取，14 源）
+mkdir -p ~/.claude/skills/ck-hunter
+cp ck-hunter.md ~/.claude/skills/ck-hunter/SKILL.md
+cp config.yaml.example config.yaml && chmod 600 config.yaml  # 填入真实 Key
 
 # 以 OpenMinis 为例
 mkdir -p /var/minis/skills/agentbypass
 cp SKILL.md /var/minis/skills/agentbypass/SKILL.md
+mkdir -p /var/minis/skills/ck-hunter
+cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 ```
 
 ### 方式二：系统提示词型
@@ -169,9 +186,12 @@ cp SKILL.md /var/minis/skills/agentbypass/SKILL.md
 ```bash
 grep -q "Cknb在线，你要整点薯条吗" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
 grep -q "^name: Agentbypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
-echo "模块数: $(grep -c '<!-- module' SKILL.md) / 20"
+echo "模块数: $(grep -c '<!-- module' SKILL.md) / 21"
 echo "行数: $(wc -l < SKILL.md) 行"
-test $(grep -c '<!-- module' SKILL.md) -ge 20 && echo "ALL GREEN" || echo "模块缺失"
+test $(grep -c '<!-- module' SKILL.md) -ge 21 && echo "ALL GREEN" || echo "模块缺失"
+# CK Hunter 子技能校验
+grep -q "^name: ck-hunter" ck-hunter.md && echo "PASS ck-hunter" || echo "FAIL ck-hunter"
+test -f config.yaml.example && echo "PASS config template" || echo "FAIL template"
 ```
 
 ### 更新
@@ -231,9 +251,11 @@ Cknb在线，你要整点薯条吗？
 
 ```text
 Agent-Bypass/
-├── SKILL.md        # 技能本体（364 行，20 模块，单文件即全部）
-├── README.md       # 说明文档（本文件）
-└── LICENSE         # MIT
+├── SKILL.md              # 主技能（384 行，21 模块：含 05 ck-hunter 调度）
+├── ck-hunter.md          # 子技能：14 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
+├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
+├── README.md             # 说明文档（本文件）
+└── LICENSE               # MIT
 ```
 
 ## 设计原则

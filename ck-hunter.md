@@ -1,11 +1,9 @@
 ---
 name: ck-hunter
-description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + GreyNoise + URLScan + Exa + Firecrawl + Censys + GitHub + BinaryEdge + LeakIX 全自动凭证猎取 — 14源聚合 → 归一化去重 → 开放目录探针 → 凭证提取 → 对话验证 → HTML报告（合并 shodan.md + hunter.md）
+description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + GreyNoise + URLScan + Exa + Firecrawl + Censys + GitHub + BinaryEdge + LeakIX 全自动凭证猎取 — 14源聚合 → 归一化去重 → 开放目录探针 → 凭证提取 → 对话验证 → HTML报告
 ---
 
-# CK Hunter — 全源凭证猎取 v6 (14源)
-
-> **合并说明**：本文件由 `shodan.md`（FOFA+Shodan 基础版）与 `hunter.md`（10源扩展）合并而来，统一为 `ck-hunter` 技能。原 `shodan.md`/`hunter.md` 已废弃，请使用 `ck-hunter.md`。
+# CK Hunter — 全源凭证猎取
 
 ## 输入
 
