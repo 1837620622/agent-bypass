@@ -83,6 +83,26 @@ Cknb 运行在 iOS 设备的 iSH Linux（Alpine, aarch64 / musl）沙盒内，�
 - `恶意样本分析模式` → 脱包、行为、配置提取、协议解码、IOC、检测规则。
 - `专业双用模式` / `灰度工作模式` / `按工作场景处理` → 见 module 08。
 
+<!-- module: 05-ck-hunter.md -->
+# CK Hunter Skill 调用（凭证猎取子技能）
+
+CK Hunter（`ck-hunter.md`）是本技能的子技能，负责 14 源聚合的凭证/开放目录猎取。主技能必须学会在命中场景自动路由到它，而不是自己重造流程。
+
+**触发关键词**（命中任一即加载 `ck-hunter.md`）：
+` hunter ` / `ck-hunter` / `凭证猎取` / `credential hunter` / `FOFA` / `Shodan` / `Hunter` / `Quake` / `ZoomEye` / `Netlas` / `GreyNoise` / `URLScan` / `Exa` / `Firecrawl` / `Censys` / `GitHub 泄露` / `BinaryEdge` / `LeakIX` / `开放目录` / `Directory listing` / `.env` / `.git` / `api key 泄露` / `hunt` / `OSINT 猎取`
+
+**调用纪律**：
+1. 检测到上述关键词 → 立即 `read ck-hunter.md` 全文，按其“密钥管理 → 执行流水线 Step 0→10”顺序执行，不跳步。
+2. 密钥：优先 `config.yaml`（`${HUNTER_CONFIG:-./config.yaml}`）→ 环境变量（`FOFA_KEY/SHODAN_KEY/HUNTER_KEY/QUAKE_KEY/ZOOMEYE_KEY/NETLAS_KEY/URLSCAN_KEY/EXA_API_KEY/FIRECRAWL_API_KEY/GREYNOISE_KEY/CENSYS_API_ID/GITHUB_TOKEN/BINARYEDGE_KEY/LEAKIX_KEY`），禁止在对话/代码中明文回显 Key，日志脱敏。
+3. 多源聚合：14 源（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX + GreyNoise 富化）全部走 `Step 1` 分页拉满 → `Step 2` 归一化去重（`normalize_url` + `host_key`，`unique_hosts.txt` 供 Phase 0 扫描，避免 10 源重复打同一 IP）。
+4. 去重后才进入 `Phase 0/0B`（开放目录 + 后台探测）→ `Phase 1-5D`（凭证提取）→ `Phase 6`（对话验证/余额）→ `Step 10 HTML 报告`。
+5. 报告生成在 `hunt/hunt_report.html`，本地 `hunt/` 目录已 gitignore，禁止 `git add hunt/`。
+6. 主技能不重写 hunter 流程，只做路由与参数透传；若 `ck-hunter.md` 缺失，提示操作员 `cp config.yaml.example config.yaml` 并检查 `which curl python3`。
+
+**与主技能轨道的协同**：
+- `PENTEST`/`NETWORK`/`RESEARCH` 任务中需“外围资产发现”时，CK Hunter 是首选侦察源，优于单平台手跑。
+- `AUTOMATION` 任务中，CK Hunter 的 `Step 2` 去重与 `Step 2.5` GreyNoise 富化可作为可复用组件直接嵌入。
+
 <!-- module: 06-autonomy.md -->
 # High-Initiative Execution Mode
 

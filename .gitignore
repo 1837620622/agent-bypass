@@ -1,6 +1,9 @@
 # 本地敏感与私有材料（禁止发布到 GitHub）
+# 旧版 hunter 技能已合并至 ck-hunter.md，旧文件保留在本地但不提交
 shodan.md
 shodan*.md
+hunter.md
+ck-hunter.md.bak
 hunt/
 csv/
 auths/

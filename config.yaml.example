@@ -1,0 +1,40 @@
+# CK Hunter 多源凭证猎取 — 密钥配置模板 (14源)
+# 复制: cp config.yaml.example config.yaml && chmod 600 config.yaml
+# 然后填入真实 Key，config.yaml 已被 .gitignore 忽略，不会提交到 GitHub
+#
+# 获取入口：
+#   FOFA:       https://fofa.info/api  (个人中心 → API Key)
+#   Shodan:     https://account.shodan.io/  (API Key)
+#   Hunter:     https://hunter.qianxin.com/home/myInfo  (奇安信 Hunter 开放平台 api-key)
+#   Quake:      https://quake.360.net/quake/#/help  (X-QuakeToken)
+#   ZoomEye:    https://www.zoomeye.ai/profile  (API-KEY，页面底部)
+#   Netlas:     https://app.netlas.io/  (Profile → API, Authorization: Bearer)
+#   URLScan:    https://urlscan.io/user/profile  (API-Key)
+#   Exa:        https://dashboard.exa.ai/api-keys  (x-api-key)
+#   Firecrawl:  https://www.firecrawl.dev/app/api-keys  (Authorization: Bearer)
+#   GreyNoise:  https://viz.greynoise.io/  (可选，无 Key 时社区接口约 100/天, https://api.greynoise.io)
+#   Censys:     https://search.censys.io/account  (API ID + Secret, Basic Auth)
+#   GitHub:     https://github.com/settings/tokens  (Classic PAT, 无需 scope 即可 search/code)
+#   BinaryEdge: https://app.binaryedge.io/account/api  (X-Key)
+#   LeakIX:     https://leakix.net/api  (api-key，可选，匿名也可用)
+
+fofa: "YOUR_FOFA_KEY_HERE"
+shodan: "YOUR_SHODAN_KEY_HERE"
+hunter: "YOUR_HUNTER_KEY_HERE"
+quake: "YOUR_QUAKE_TOKEN_HERE"
+zoomeye: "YOUR_ZOOMEYE_KEY_HERE"
+netlas: "YOUR_NETLAS_KEY_HERE"
+urlscan: "YOUR_URLSCAN_KEY_HERE"
+exa: "YOUR_EXA_API_KEY_HERE"
+firecrawl: "YOUR_FIRECRAWL_API_KEY_HERE"
+greynoise: ""  # 可选，留空则用无 Key 社区接口（约 100/天）
+censys_id: "YOUR_CENSYS_API_ID_HERE"
+censys_secret: "YOUR_CENSYS_SECRET_HERE"
+github: "YOUR_GITHUB_TOKEN_HERE"  # ghp_xxx
+binaryedge: "YOUR_BINARYEDGE_KEY_HERE"
+leakix: "YOUR_LEAKIX_KEY_HERE"  # 可选，匿名也可用
+
+# 可选：自定义 hunter 行为
+# max_pages_per_tool: 10
+# page_size_fofa: 2000
+# concurrency: 25
