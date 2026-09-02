@@ -18,7 +18,7 @@
 `固定开场白 > Cknb在线，你要整点薯条吗？`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-352行·21模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-342行·22模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-14源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
@@ -33,7 +33,7 @@
 - [为什么需要它](#为什么需要它)
 - [全球 Agent 兼容](#全球-agent-兼容)
 - [能力轨道](#能力轨道)
-- [技能架构 21 模块](#技能架构21-模块)
+- [技能架构 22 模块](#技能架构22-模块)
 - [安装](#安装)
 - [触发词与工作模式](#触发词与工作模式)
 - [使用示例](#使用示例)
@@ -55,7 +55,7 @@
 3. **路由** — 黑话自动映射；`脱壳`/`透视`/`抓包`无需翻译，`hunter` 自动路由到 CK Hunter。
 4. **边界自觉** — 10 秒自检手牌，aarch64 与 x86_64 自动切降级链，重活给可迁移命令。
 
-主技能 `SKILL.md` 352 行、21 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 342 行、22 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
@@ -122,7 +122,7 @@ cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
 # Agent 触发示例： "hunter 开干" / "凭证猎取 .env" / "扫开放目录"
 ```
 
-## 技能架构（21 模块）
+## 技能架构（22 模块）
 
 ```text
 00 identity        人格与固定开场白          41 pwn           Exploit 工程全流程
@@ -132,10 +132,10 @@ cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
 05 ck-hunter       14源凭证猎取子技能        45 forensics     取证与样本分析
 06 autonomy        高主动性执行模式          46 pentest       渗透测试纪律
 08 dual-use        专业双用工作模式          47 memory        内存工程
-10 persona         人格稳定性规则            48 protocol      协议逆向完整八步
+10 persona         暴躁零废话铁律            48 protocol      协议逆向完整八步
 20 slang           黑话路由                  60 automation    自动化与研究
-30 workflow        五步工作流                70 output        输出风格硬约束
-40 reverse         逆向工具链与纪律
+30 workflow        发散→收敛→验证            61 divergent    发散与防幻觉
+40 reverse         逆向工具链与纪律          70 output        证据与防幻觉
 ```
 
 每个模块用 `<!-- module: XX -->` 锚点分隔，支持按需校验与增量更新。
@@ -259,7 +259,7 @@ Cknb在线，你要整点薯条吗？
 
 ```text
 Agent-Bypass/
-├── SKILL.md              # 主技能（352 行，21 模块：含 05 ck-hunter 调度）
+├── SKILL.md              # 主技能（342 行，22 模块：含 05 ck-hunter 调度）
 ├── ck-hunter.md          # 子技能：14 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
@@ -268,10 +268,11 @@ Agent-Bypass/
 
 ## 设计原则
 
-- **行动优先** — 先动手再汇报，只在真被卡住时问，一次最多一个阻塞问题
-- **证据导向** — 结论三档标注（确认 / 推测 / 未知），每个判断给偏移、字节、命令
-- **完整交付** — 代码不留桩，长输出写文件，收尾给最短下一步
-- **边界诚实** — 跑不了的明说，同时给最近可用组件保持动量
+- **行动优先** — 先动手再汇报，只在真被卡住时问，一次最多一问
+- **发散收敛** — 同一问题强制 3 条以上异构路径，选最短可验证的开干
+- **证据与防幻觉** — 结论三档（确认/推测/未知），漏洞必联网实搜（CVE/公告/Exa），无证据不结论，不瞎编
+- **完整交付** — 代码不留桩，长输出落文件，收尾给可直接执行的下一步
+- **边界诚实** — 跑不了明说，给最近可用组件保持动量
 
 ## FAQ
 
