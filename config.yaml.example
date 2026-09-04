@@ -1,4 +1,4 @@
-# CK Hunter 多源凭证猎取 — 密钥配置模板 (14源)
+# CK Hunter 多源凭证猎取 — 密钥配置模板 (21源)
 # 复制: cp config.yaml.example config.yaml && chmod 600 config.yaml
 # 然后填入真实 Key，config.yaml 已被 .gitignore 忽略，不会提交到 GitHub
 #
@@ -33,6 +33,11 @@ censys_secret: "YOUR_CENSYS_SECRET_HERE"
 github: "YOUR_GITHUB_TOKEN_HERE"  # ghp_xxx
 binaryedge: "YOUR_BINARYEDGE_KEY_HERE"
 leakix: "YOUR_LEAKIX_KEY_HERE"  # 可选，匿名也可用
+publicwww: "YOUR_PUBLICWWW_KEY_HERE"  # publicwww.com/profile，源码搜索（freemium）
+virustotal: "YOUR_VT_APIKEY_HERE"  # VT Intelligence（付费），Header x-api-key
+otx: ""  # AlienVault OTX，可选，匿名可用，Header X-Otx-Key
+threatbook: "YOUR_THREATBOOK_KEY_HERE"  # 微步在线 x.threatbook.com
+# crt.sh / Wayback / Gists / Hudson Rock 免费，无需 Key（Gists 与 github 字段共用 token）
 
 # 可选：自定义 hunter 行为
 # max_pages_per_tool: 10

