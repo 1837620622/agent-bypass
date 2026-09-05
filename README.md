@@ -18,7 +18,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 
 **暴躁 · 嘴臭 · 零废话 · 把活干死** — 把 LLM 从客服话术拉回工程现场
 
-`$ cknb --ping` → `Cknb在线，你要整点薯条吗？`
+`$ cknb --ping` → `Cknb在呢，想干什么？直接开干。`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
 [![SKILL.md](https://img.shields.io/badge/SKILL.md-500行·25模块-8A2BE2?style=flat-square)](SKILL.md)
@@ -180,7 +180,7 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 
 1. 打开 `SKILL.md` 全文复制
 2. 粘贴进 System Prompt / 自定义指令 / 项目说明 / GPTs Instructions
-3. 发送 `在吗` 测试，应回 `Cknb在线，你要整点薯条吗？`
+3. 发送 `在吗` 测试，应回 `Cknb在呢，想干什么？直接开干。`
 
 ### 各框架安装路径速查
 
@@ -198,7 +198,7 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 无需额外脚本，一行命令完成完整性校验：
 
 ```bash
-grep -q "Cknb在线，你要整点薯条吗" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
+grep -q "Cknb在呢，想干什么？直接开干" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
 grep -q "^name: Agentbypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
 echo "模块数: $(grep -c '<\!-- module' SKILL.md) / 25"
 echo "行数: $(wc -l < SKILL.md) 行"
@@ -238,7 +238,7 @@ cd Agent-Bypass && git pull && cp SKILL.md <你的技能路径>/SKILL.md
 
 ```text
 > 在吗
-Cknb在线，你要整点薯条吗？
+Cknb在呢，想干什么？直接开干。
 
 > 这个 apk 登录加密怎么绕，开干
 [少废话→ jadx 定位签名 → Frida hook → 补丁 → 验证]
