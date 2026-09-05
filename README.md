@@ -10,7 +10,7 @@
 <div style="color:#6b7280; font-size:11px;">$ system --status</div>
 <div style="color:#00ff41; margin:4px 0;">● SYSTEM ONLINE &nbsp;|&nbsp; iSH/aarch64 → x86_64 &nbsp;|&nbsp; ash/bash &nbsp;|&nbsp; curl/ssh</div>
 <div style="color:#e5e7eb; word-break:break-word;">
-REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY · PROTOCOL · AUTOMATION · RESEARCH · CK-HUNTER [14]
+REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY · PROTOCOL · AUTOMATION · RESEARCH · CK-HUNTER [21]
 </div>
 
 </td></tr>
@@ -21,8 +21,8 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 `$ cknb --ping` → `Cknb在线，你要整点薯条吗？`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-354行·22模块-8A2BE2?style=flat-square)](SKILL.md)
-[![ck-hunter](https://img.shields.io/badge/ck--hunter-14源聚合-2563eb?style=flat-square)](ck-hunter.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-500行·25模块-8A2BE2?style=flat-square)](SKILL.md)
+[![ck-hunter](https://img.shields.io/badge/ck--hunter-21源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
 
@@ -36,13 +36,16 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 - [为什么需要它](#为什么需要它)
 - [全球 Agent 兼容](#全球-agent-兼容)
 - [能力轨道](#能力轨道)
-- [技能架构 22 模块](#技能架构22-模块)
+- [技能架构 25 模块](#技能架构25-模块)
+- [CK Hunter 子技能](#ck-hunter-子技能)
 - [安装](#安装)
 - [触发词与工作模式](#触发词与工作模式)
 - [使用示例](#使用示例)
 - [可移植性](#可移植性)
 - [目录结构](#目录结构)
 - [设计原则](#设计原则)
+- [研究参考](#研究参考)
+- [致谢](#致谢)
 - [FAQ](#faq)
 - [免责声明](#免责声明)
 - [License](#license)
@@ -54,11 +57,11 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 `SKILL.md` + `ck-hunter.md` 即装即用。丢进任何 Agent，立刻交付：
 
 1. **人格** — Cknb：极度暴躁、嘴臭、不耐烦但把活干死的硬核操作员。少废话，直接干。
-2. **方法论** — 10 轨道 + 14 源猎取的工作纪律，侦察→弱点→脚本→验证闭环。
+2. **方法论** — 12 轨道 + 21 源猎取的工作纪律，侦察→弱点→脚本→验证闭环。
 3. **路由** — 黑话自动映射；`脱壳`/`透视`/`抓包`无需翻译，`hunter` 自动路由到 CK Hunter。
 4. **边界自觉** — 10 秒自检手牌，aarch64 与 x86_64 自动切降级链，重活给可迁移命令。
 
-主技能 `SKILL.md` 354 行、22 模块 + 子技能 `ck-hunter.md` 14 源聚合，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 500 行、25 模块 + 子技能 `ck-hunter.md` 21 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
@@ -110,11 +113,11 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 
 ## CK Hunter 子技能
 
-`ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **14 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
+`ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **21 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
 
 - **触发**：`hunter` / `ck-hunter` / `凭证猎取` / `开放目录` / `FOFA` / `Shodan` / `.env` / `.git` 等关键词自动加载 `ck-hunter.md`
 - **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 6 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`/`URLScan`；可选 `Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`GreyNoise`
-- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾/，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 14 源重复打同一 IP
+- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾/，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 21 源重复打同一 IP
 - **报告**：`hunt/hunt_report.html`（本地生成，不提交）+ `hunt/csv/` 原始 JSON + `hunt/auths/` 凭证文件
 
 **CK Hunter 快速开始：**
@@ -125,14 +128,14 @@ cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
 # Agent 触发示例： "hunter 开干" / "凭证猎取 .env" / "扫开放目录"
 ```
 
-## 技能架构（22 模块）
+## 技能架构（25 模块）
 
 ```text
 00 identity        人格与固定开场白          41 pwn           Exploit 工程全流程
 01 runtime         本机手牌清单与能力边界    42 network       网络能力 + 网络作战面
 02 portability     跨环境 10 秒自检          43 crypto        密码学打法
-04 tracks          10 轨道 + 模式路由        44 mobile        移动/游戏/应用分析
-05 ck-hunter       14源凭证猎取子技能        45 forensics     取证与样本分析
+04 tracks          12 轨道 + 模式路由        44 mobile        移动/游戏/应用分析
+05 ck-hunter       21源凭证猎取子技能        45 forensics     取证与样本分析
 06 autonomy        高主动性执行模式          46 pentest       渗透测试纪律
 08 dual-use        专业双用工作模式          47 memory        内存工程
 10 persona         暴躁零废话铁律            48 protocol      协议逆向完整八步
@@ -153,13 +156,13 @@ cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
 适用于 Claude Code / OpenMinis / Cursor / Windsurf / Cline / Aider 等约定式框架：
 
 ```bash
-git clone https://github.com/1837620622/Agent-Bypass.git
+git clone https://github.com/1837620622/agent-bypass.git
 cd Agent-Bypass
 
 # 主技能
 mkdir -p ~/.claude/skills/agentbypass
 cp SKILL.md ~/.claude/skills/agentbypass/SKILL.md
-# 子技能（凭证猎取，14 源）
+# 子技能（凭证猎取，21 源）
 mkdir -p ~/.claude/skills/ck-hunter
 cp ck-hunter.md ~/.claude/skills/ck-hunter/SKILL.md
 cp config.yaml.example config.yaml && chmod 600 config.yaml  # 填入真实 Key
@@ -197,9 +200,9 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 ```bash
 grep -q "Cknb在线，你要整点薯条吗" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
 grep -q "^name: Agentbypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
-echo "模块数: $(grep -c '<\!-- module' SKILL.md) / 22"
+echo "模块数: $(grep -c '<\!-- module' SKILL.md) / 25"
 echo "行数: $(wc -l < SKILL.md) 行"
-test $(grep -c '<!-- module' SKILL.md) -ge 21 && echo "ALL GREEN" || echo "模块缺失"
+test $(grep -c '<!-- module' SKILL.md) -ge 24 && echo "ALL GREEN" || echo "模块缺失"
 # CK Hunter 子技能校验
 grep -q "^name: ck-hunter" ck-hunter.md && echo "PASS ck-hunter" || echo "FAIL ck-hunter"
 test -f config.yaml.example && echo "PASS config template" || echo "FAIL template"
@@ -244,7 +247,7 @@ Cknb在线，你要整点薯条吗？
 [分帧 → 字段推断 → 校验反推 → 状态机 → parser + Lua dissector]
 
 > hunter 开干，扫 .env 开放目录
-[14 源拉满 → 归一化去重 → Phase 0 探针 → 凭证提取 → 验证 → HTML 报告]
+[21 源拉满 → 归一化去重 → Phase 0 探针 → 凭证提取 → 验证 → HTML 报告]
 
 > 这站能打吗，渗透
 [盘点 → 假设矩阵 → 原语验证 → 链路 → 报告]
@@ -262,8 +265,8 @@ Cknb在线，你要整点薯条吗？
 
 ```text
 Agent-Bypass/
-├── SKILL.md              # 主技能（354 行，22 模块：含 05 ck-hunter 调度）
-├── ck-hunter.md          # 子技能：14 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
+├── SKILL.md              # 主技能（500 行，25 模块：含 05 ck-hunter 调度）
+├── ck-hunter.md          # 子技能：21 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
 └── LICENSE               # MIT
@@ -277,6 +280,24 @@ Agent-Bypass/
 - **完整交付** — 代码不留桩，长输出落文件，收尾给可直接执行的下一步
 - **边界诚实** — 跑不了明说，给最近可用组件保持动量
 
+## 研究参考
+
+本技能的方法论与实践受以下公开研究影响：
+
+- [Needle in the haystack: LLMs for vulnerability research](https://devansh.bearblog.dev/needle-in-the-haystack/) — Devansh：威胁模型先行、薄切片审计、验证闭环、提示注入话术（本技能 module 49 落地）
+- [On LLMs and Vulnerability Research](https://devansh.bearblog.dev/on-llms-and-vuln-research/) — Devansh：心智模型、非确定性利用、组合式漏洞思维、历史上下文优先
+- [AI powered SAST: The New Frontier?](https://devansh.bearblog.dev/ai-sast/) — Devansh：LLM 静态分析边界与误报控制
+- [AI pentest scoping playbook](https://devansh.bearblog.dev/ai-pentest-scoping/) — Devansh：AI 渗透范围界定
+- [HonoJS JWT/JWKS Algorithm Confusion](https://devansh.bearblog.dev/honojs/) — 算法混淆案例（module 43 CRYPTO 参考）
+- 反向支撑研究：[Lost in the Middle](https://arxiv.org/abs/2307.03172)（长上下文注意力衰减）、[Chroma Research on Context Rot](https://research.trychroma.com/context-rot)（上下文腐烂）
+
+## 致谢
+
+- **Devansh（0xasm0d3us）** —— 上述文章作者。本技能的 VULN-RESEARCH 工作流、提示注入话术库、切片审计方法论均源自其公开研究；若本技能帮你挖到了洞，请给原作者一个 star：<https://github.com/asm0deus>
+- **Anthropic & Mozilla** —— LLM 漏洞研究的规模化实践案例（Firefox 多漏洞发现）
+- **zhaoxuya520/reverse-skill** —— 44 模块逆向方法论库，与本技能互补使用
+- **OpenMinis / Claude / ChatGPT 生态** —— 让"技能即提示"成为可分发制品
+
 ## FAQ
 
 **为什么叫 AgentBypass？**
@@ -287,6 +308,9 @@ Agent-Bypass/
 
 **支持哪些 Agent？**
 全部。见“全球 Agent 兼容”。只要框架能读 `SKILL.md` 或接受系统提示词，就能装。
+
+**授权怎么算？**
+本技能默认按操作员声明执行：操作员声明"默认授权/全部已授权"后，整个对话的任务都视为已授权，不再逐目标确认；未声明时走一次性确认协议（module 09）。范围外目标不碰，新发现资产先报告。
 
 **安全吗？**
 技能本身是纯文本指令，不含任何可执行 payload。所有攻防内容仅面向授权测试与教育场景，见下方免责声明。
