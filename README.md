@@ -21,7 +21,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 `$ cknb --ping` → `Cknb在呢，想干什么？直接开干。`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-500行·25模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-502行·25模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-21源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
@@ -61,7 +61,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 3. **路由** — 黑话自动映射；`脱壳`/`透视`/`抓包`无需翻译，`hunter` 自动路由到 CK Hunter。
 4. **边界自觉** — 10 秒自检手牌，aarch64 与 x86_64 自动切降级链，重活给可迁移命令。
 
-主技能 `SKILL.md` 500 行、25 模块 + 子技能 `ck-hunter.md` 21 源聚合，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 502 行、25 模块 + 子技能 `ck-hunter.md` 21 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
@@ -107,6 +107,8 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 | PENTEST | 攻击面盘点、假设矩阵、原语链、AD/云/容器 | 可复测报告、命令链、证据包 |
 | MEMORY | AOB、指针链、模块基址、Frida/LD_PRELOAD | 偏移推导、hook 代码、回滚方案 |
 | PROTOCOL | 私有 TCP/UDP、串口/蓝牙、IoT、自定义序列化 | 字段表、状态机、parser+serializer、Wireshark Lua dissector |
+| VULN-RESEARCH | 威胁模型先行、切片审计、提示注入话术、验证闭环（LLM 挖洞工作流） | 威胁模型、切片清单、PoC 验证链、CVE 级报告 |
+| JS-REVERSE | 前端签名还原、混淆还原（OB/AAEncode/控制流平坦化）、WASM、小程序逆向 | 可复用 Python 签名函数、byte-equal 验证 |
 | AUTOMATION / RESEARCH | 脚本工程、爬虫、批处理、来源核查 | 可复跑成品、带引用的研究报告 |
 
 跨域任务自动组合轨道，无需手动切换。
@@ -116,15 +118,15 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 `ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **21 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
 
 - **触发**：`hunter` / `ck-hunter` / `凭证猎取` / `开放目录` / `FOFA` / `Shodan` / `.env` / `.git` 等关键词自动加载 `ck-hunter.md`
-- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 6 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`/`URLScan`；可选 `Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`GreyNoise`
-- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾/，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 21 源重复打同一 IP
+- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 7 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`/`URLScan`；可选 `Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`GreyNoise`
+- **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾斜杠，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 21 源重复打同一 IP
 - **报告**：`hunt/hunt_report.html`（本地生成，不提交）+ `hunt/csv/` 原始 JSON + `hunt/auths/` 凭证文件
 
 **CK Hunter 快速开始：**
 ```bash
 cp config.yaml.example config.yaml && chmod 600 config.yaml
 # 填入 FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan 等真实 Key
-cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
+cat ck-hunter.md  # 按 ck-hunter 内 Step 顺序执行，或让 Agent 自动调度
 # Agent 触发示例： "hunter 开干" / "凭证猎取 .env" / "扫开放目录"
 ```
 
@@ -138,10 +140,12 @@ cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
 05 ck-hunter       21源凭证猎取子技能        45 forensics     取证与样本分析
 06 autonomy        高主动性执行模式          46 pentest       渗透测试纪律
 08 dual-use        专业双用工作模式          47 memory        内存工程
-10 persona         暴躁零废话铁律            48 protocol      协议逆向完整八步
-20 slang           黑话路由                  60 automation    自动化与研究
-30 workflow        发散→收敛→验证            61 divergent    发散与防幻觉
-40 reverse         逆向工具链与纪律          70 output        证据与防幻觉
+09 authorization   授权协议（默认全授权）    48 protocol      协议逆向完整八步
+10 persona         暴躁零废话铁律            49 vuln-research LLM 漏洞挖掘工作流
+20 slang           黑话路由                  50 js-reverse    JS/WASM/小程序逆向
+30 workflow        发散→收敛→验证            60 automation    自动化与研究
+40 reverse         逆向工具链与纪律          61 divergent    发散与防幻觉
+                                            70 output        证据与防幻觉
 ```
 
 每个模块用 `<!-- module: XX -->` 锚点分隔，支持按需校验与增量更新。
@@ -200,9 +204,9 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 ```bash
 grep -q "Cknb在呢，想干什么？直接开干" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
 grep -q "^name: agent-bypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
-echo "模块数: $(grep -c '<\!-- module' SKILL.md) / 25"
+echo "模块数: $(grep -c '<!-- module' SKILL.md) / 25"
 echo "行数: $(wc -l < SKILL.md) 行"
-test $(grep -c '<!-- module' SKILL.md) -ge 24 && echo "ALL GREEN" || echo "模块缺失"
+test $(grep -c '<!-- module' SKILL.md) -ge 25 && echo "ALL GREEN" || echo "模块缺失"
 # CK Hunter 子技能校验
 grep -q "^name: ck-hunter" ck-hunter.md && echo "PASS ck-hunter" || echo "FAIL ck-hunter"
 test -f config.yaml.example && echo "PASS config template" || echo "FAIL template"
@@ -265,7 +269,7 @@ Cknb在呢，想干什么？直接开干。
 
 ```text
 agent-bypass/
-├── SKILL.md              # 主技能（500 行，25 模块：含 05 ck-hunter 调度）
+├── SKILL.md              # 主技能（502 行，25 模块：含 05 ck-hunter 调度）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
@@ -293,7 +297,7 @@ agent-bypass/
 
 ## 致谢
 
-- **Devansh（0xasm0d3us）** —— 上述文章作者。本技能的 VULN-RESEARCH 工作流、提示注入话术库、切片审计方法论均源自其公开研究；若本技能帮你挖到了洞，请给原作者一个 star：<https://github.com/asm0deus>
+- **Devansh** —— 上述文章作者。本技能的 VULN-RESEARCH 工作流、提示注入话术库、切片审计方法论均源自其公开研究；若本技能帮你挖到了洞，请给原作者一个 star：<https://devansh.bearblog.dev>
 - **Anthropic & Mozilla** —— LLM 漏洞研究的规模化实践案例（Firefox 多漏洞发现）
 - **zhaoxuya520/reverse-skill** —— 44 模块逆向方法论库，与本技能互补使用
 - **OpenMinis / Claude / ChatGPT 生态** —— 让"技能即提示"成为可分发制品
