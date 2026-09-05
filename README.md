@@ -1,6 +1,6 @@
 <div align="center">
 
-# AGENTBYPASS // 全能agent-bypass
+# agent-bypass // 全能 Cknb · 技术操作员
 
 ### 全能 Cknb · 零废话硬核技术操作员 · 手持 iOS / 电脑双栈
 
@@ -65,7 +65,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 
 ## 为什么需要它
 
-默认 Agent 太礼貌、只规划不干活、遇专业任务只给模板。AgentBypass 直接解决：
+默认 Agent 太礼貌、只规划不干活、遇专业任务只给模板。agent-bypass 直接解决：
 
 - **工程纪律** — 每轨道有工具链、输入产出、验证标准，不是人设包装。
 - **黑话秒懂** — `透视`/`脱壳`/`抓包逆协议`/`hunter` 直接走技术路径。
@@ -157,19 +157,19 @@ cat ck-hunter.md  # 按 Step 0→10 顺序执行，或让 Agent 自动调度
 
 ```bash
 git clone https://github.com/1837620622/agent-bypass.git
-cd Agent-Bypass
+cd agent-bypass
 
 # 主技能
-mkdir -p ~/.claude/skills/agentbypass
-cp SKILL.md ~/.claude/skills/agentbypass/SKILL.md
+mkdir -p ~/.claude/skills/agent-bypass
+cp SKILL.md ~/.claude/skills/agent-bypass/SKILL.md
 # 子技能（凭证猎取，21 源）
 mkdir -p ~/.claude/skills/ck-hunter
 cp ck-hunter.md ~/.claude/skills/ck-hunter/SKILL.md
 cp config.yaml.example config.yaml && chmod 600 config.yaml  # 填入真实 Key
 
 # 以 OpenMinis 为例
-mkdir -p /var/minis/skills/agentbypass
-cp SKILL.md /var/minis/skills/agentbypass/SKILL.md
+mkdir -p /var/minis/skills/agent-bypass
+cp SKILL.md /var/minis/skills/agent-bypass/SKILL.md
 mkdir -p /var/minis/skills/ck-hunter
 cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 ```
@@ -186,8 +186,8 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 
 | Agent | 放置位置 |
 |-------|----------|
-| OpenMinis | `/var/minis/skills/agentbypass/SKILL.md` |
-| Claude Code | `~/.claude/skills/agentbypass/SKILL.md` |
+| OpenMinis | `/var/minis/skills/agent-bypass/SKILL.md` |
+| Claude Code | `~/.claude/skills/agent-bypass/SKILL.md` |
 | Cursor / Windsurf | Settings → Rules / Custom Instructions 粘贴 |
 | Cline / Aider | `.clinerules` / `CONVENTIONS.md` 粘贴 |
 | ChatGPT / Gemini / 任意 LLM | System Prompt / GPTs 指令 / 项目说明 粘贴全文 |
@@ -199,7 +199,7 @@ cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
 
 ```bash
 grep -q "Cknb在呢，想干什么？直接开干" SKILL.md && echo "PASS 开场白" || echo "FAIL 开场白"
-grep -q "^name: Agentbypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
+grep -q "^name: agent-bypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL frontmatter"
 echo "模块数: $(grep -c '<\!-- module' SKILL.md) / 25"
 echo "行数: $(wc -l < SKILL.md) 行"
 test $(grep -c '<!-- module' SKILL.md) -ge 24 && echo "ALL GREEN" || echo "模块缺失"
@@ -211,7 +211,7 @@ test -f config.yaml.example && echo "PASS config template" || echo "FAIL templat
 ### 更新
 
 ```bash
-cd Agent-Bypass && git pull && cp SKILL.md <你的技能路径>/SKILL.md
+cd agent-bypass && git pull && cp SKILL.md <你的技能路径>/SKILL.md
 ```
 
 ## 触发词与工作模式
@@ -264,7 +264,7 @@ Cknb在呢，想干什么？直接开干。
 ## 目录结构
 
 ```text
-Agent-Bypass/
+agent-bypass/
 ├── SKILL.md              # 主技能（500 行，25 模块：含 05 ck-hunter 调度）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
@@ -300,7 +300,7 @@ Agent-Bypass/
 
 ## FAQ
 
-**为什么叫 AgentBypass？**
+**为什么叫 agent-bypass？**
 技能名。里面的人格叫 Cknb，本体是一个嘴硬的全能技术操作员。Bypass 指绕过废话、直达结果。
 
 **和直接写系统提示词有什么区别？**
@@ -316,7 +316,7 @@ Agent-Bypass/
 技能本身是纯文本指令，不含任何可执行 payload。所有攻防内容仅面向授权测试与教育场景，见下方免责声明。
 
 **如何卸载？**
-删除技能目录下的 `agentbypass/SKILL.md` 或清空系统提示词中的对应内容即可。
+删除技能目录下的 `agent-bypass/SKILL.md` 或清空系统提示词中的对应内容即可。
 
 **如何提需求 / 报 bug？**
 提 Issue 附复现步骤、期望产出、实际输出三件套，优先带最小可复现样例。
