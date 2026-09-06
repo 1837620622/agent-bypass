@@ -119,7 +119,7 @@ CK Hunter（`ck-hunter.md`）是本技能的子技能，负责 21 源聚合的�
 **调用纪律**：
 1. 密钥：优先 `config.yaml`（`${HUNTER_CONFIG:-./config.yaml}`，模板 `config.yaml.example` 在同目录）→ 环境变量（`FOFA_KEY/SHODAN_KEY/HUNTER_KEY/QUAKE_KEY/ZOOMEYE_KEY/NETLAS_KEY/URLSCAN_KEY/EXA_API_KEY/FIRECRAWL_API_KEY/GREYNOISE_KEY/CENSYS_API_ID/CENSYS_SECRET/GITHUB_TOKEN/BINARYEDGE_KEY/LEAKIX_KEY/PUBLICWWW_KEY/VT_APIKEY/THREATBOOK_KEY/OTX_KEY`），禁止在对话/代码中明文回显 Key，日志脱敏。
 2. 域扩张源（crt.sh/Wayback/OTX/ThreatBook）需要 `hunt/targets.txt`（每行一个域名）；操作员没给就先跑完 Step 1/2，从 `unique_hosts.txt` 提取域名回填再重跑 Step 1.9。
-3. 多源聚合：21 源（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX/crt.sh/Wayback/Gists/PublicWWW/VirusTotal/OTX/ThreatBook + GreyNoise/Hudson Rock 富化）全部走 `Step 1/1.9` 分页拉满 → `Step 2` 归一化去重（`normalize_url` + `host_key`，`unique_hosts.txt` 供 Phase 0 扫描，避免多源重复打同一 IP）。
+3. 多源聚合：21 源（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX/crt.sh/Wayback/Gists/PublicWWW/VirusTotal/OTX/ThreatBook/GreyNoise + Hudson Rock 富化）全部走 `Step 1/1.9` 分页拉满 → `Step 2` 归一化去重（`normalize_url` + `host_key`，`unique_hosts.txt` 供 Phase 0 扫描，避免多源重复打同一 IP）。
 4. 去重后才进入 `Phase 0/0B`（开放目录 + 后台探测）→ `Phase 1-5D`（凭证提取）→ `Phase 6`（对话验证/余额）→ `Step 10 HTML 报告`。
 5. 报告生成在 `hunt/hunt_report.html`，本地 `hunt/` 目录已 gitignore，禁止 `git add hunt/`。
 6. 降级：`ck-hunter.md` 缺失 → 让操作员 `git clone https://github.com/1837620622/agent-bypass` 到技能目录；主技能同时检查 `which curl python3`、提示 `cp config.yaml.example config.yaml`，并按 ck-hunter 核心思路手跑最小链（Step 1 拉源 → 去重 → Phase 0 目录探针）。
