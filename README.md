@@ -21,7 +21,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 `$ cknb --ping` → `Cknb在呢，想干什么？直接开干。`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square&logo=github&logoColor=white)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-502行·25模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-512行·25模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-21源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#全球-agent-兼容)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖·纯文本-444?style=flat-square)](#安装)
@@ -61,7 +61,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 3. **路由** — 黑话自动映射；`脱壳`/`透视`/`抓包`无需翻译，`hunter` 自动路由到 CK Hunter。
 4. **边界自觉** — 10 秒自检手牌，aarch64 与 x86_64 自动切降级链，重活给可迁移命令。
 
-主技能 `SKILL.md` 502 行、25 模块 + 子技能 `ck-hunter.md` 21 源聚合，无外部依赖，无可执行 payload。
+主技能 `SKILL.md` 512 行、25 模块 + 子技能 `ck-hunter.md` 21 源聚合，无外部依赖，无可执行 payload。
 
 ## 为什么需要它
 
@@ -118,6 +118,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 `ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **21 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
 
 - **触发**：`hunter` / `ck-hunter` / `凭证猎取` / `开放目录` / `FOFA` / `Shodan` / `.env` / `.git` 等关键词自动加载 `ck-hunter.md`
+- **加载（切片协议）**：`ck-hunter.md` 2400+ 行 ≈ 40K token——只读文首 QUICKSTART（前 60 行）+ 按章节表切片读当前 Step（30-100 行），**禁止通读全文**，防 context rot
 - **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 7 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`/`URLScan`；可选 `Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`GreyNoise`
 - **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾斜杠，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 21 源重复打同一 IP
 - **报告**：`hunt/hunt_report.html`（本地生成，不提交）+ `hunt/csv/` 原始 JSON + `hunt/auths/` 凭证文件
@@ -269,7 +270,7 @@ Cknb在呢，想干什么？直接开干。
 
 ```text
 agent-bypass/
-├── SKILL.md              # 主技能（502 行，25 模块：含 05 ck-hunter 调度）
+├── SKILL.md              # 主技能（512 行，25 模块：含 05 ck-hunter 调度）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
@@ -311,7 +312,13 @@ agent-bypass/
 这是结构化的技能文件：能力轨道 + 环境自检 + 模式路由 + 输出硬约束，可版本化、可移植、可校验、可组合。不是一段人设描述。
 
 **支持哪些 Agent？**
-全部。见“全球 Agent 兼容”。只要框架能读 `SKILL.md` 或接受系统提示词，就能装。
+全部。见"全球 Agent 兼容"。只要框架能读 `SKILL.md` 或接受系统提示词，就能装。
+
+**Agent Skills 开放标准兼容？**
+是。本技能遵循 [Agent Skills 开放标准](https://agentskills.io)（Anthropic 发起，Claude Code/Cursor/OpenHands 等广泛采用）：文件夹 + `SKILL.md`（name/description 元数据）+ 渐进式披露三阶段（发现→激活→执行）。子技能 `ck-hunter.md` 即标准的 "supporting file" 按需加载模式。
+
+**加载太大撑爆上下文怎么办？**
+标准设计就是解法：技能列表只占 name+description；正文按需加载。ck-hunter（2400+ 行）内置 QUICKSTART 切片协议——只读前 60 行 + 按章节表切片读当前 Step，禁止通读全文。另注意：部分 agent 对 description+when_to_use 有 1536 字符截断，本技能已控制在预算内。
 
 **授权怎么算？**
 本技能默认按操作员声明执行：操作员声明"默认授权/全部已授权"后，整个对话的任务都视为已授权，不再逐目标确认；未声明时走一次性确认协议（module 09）。范围外目标不碰，新发现资产先报告。
