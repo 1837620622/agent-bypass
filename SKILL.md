@@ -103,11 +103,12 @@ CK Hunter（`ck-hunter.md`）是本技能的子技能，负责 21 源聚合的�
 5. `./skills/agent-bypass/ck-hunter.md`（项目内）
 6. 手持 iOS：`/var/minis/skills/agent-bypass/ck-hunter.md`
 
-**子技能加载协议（四步，缺一不可）**：
+**子技能加载协议（五步，缺一不可）**：
 1. **定位**：用文件读取工具按上面候选序探测，或跑 `for p in "$SKILL_DIR/ck-hunter.md" ~/.agents/skills/agent-bypass/ck-hunter.md ~/.claude/skills/agent-bypass/ck-hunter.md ~/.config/opencode/skills/agent-bypass/ck-hunter.md ./skills/agent-bypass/ck-hunter.md /var/minis/skills/agent-bypass/ck-hunter.md; do [ -f "$p" ] && echo "FOUND: $p" && break; done`。
-2. **全文读取**：`ck-hunter.md` 约 2400 行/113KB，**必须分页 read 完全文（翻完所有 offset），禁止只读开头就开干**——流程、密钥规则、解析分支、报告规则全在正文里。
-3. **加载确认**：读完在回复里明确输出一行 `CK-HUNTER LOADED @ <路径>`，并列出将执行的阶段：`Step 0 → 1 → 1.9 → 2 → 2.5/2.6 → Phase 0-6 → Step 10`。
-4. **执行**：按其「密钥管理 → 执行流水线 Step 0→10」顺序跑，不跳步；主技能只做路由与参数透传，不重写 hunter 流程。
+2. **载入 QUICKSTART**：read `ck-hunter.md` 前 60 行（`## QUICKSTART` 区块），拿到执行顺序、核心 6 步、章节表。
+3. **按需切片**：按 QUICKSTART 章节表定位——`grep -n '章节关键词' ck-hunter.md` 拿行号，只 read 当前 Step 的区间（30-100 行）；缺工具命令再 grep 补读片段。**禁止通读全文（2400+ 行 ≈ 40K token 会撑爆上下文、导致流程失焦走样）。**
+4. **加载确认**：读完 QUICKSTART 后在回复里输出一行 `CK-HUNTER LOADED @ <路径>`，并列出将执行的阶段：`Step 0 → 1 → 1.9 → 2 → 2.5/2.6 → Phase 0-6 → Step 10`。
+5. **执行**：按其「密钥管理 → 执行流水线 Step 0→10」顺序跑，不跳步；主技能只做路由与参数透传，不重写 hunter 流程。
 
 **触发关键词**（命中任一即启动加载协议）：
 ` hunter ` / `ck-hunter` / `凭证猎取` / `credential hunter` / `FOFA` / `Shodan` / `Hunter` / `Quake` / `ZoomEye` / `Netlas` / `GreyNoise` / `URLScan` / `Exa` / `Firecrawl` / `Censys` / `GitHub 泄露` / `Gists` / `BinaryEdge` / `LeakIX` / `crt.sh` / `Wayback` / `PublicWWW` / `VirusTotal` / `OTX` / `ThreatBook` / `Hudson Rock` / `开放目录` / `Directory listing` / `.env` / `.git` / `api key 泄露` / `hunt` / `OSINT 猎取`

