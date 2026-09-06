@@ -164,19 +164,16 @@ cat ck-hunter.md  # 按 ck-hunter 内 Step 顺序执行，或让 Agent 自动调
 git clone https://github.com/1837620622/agent-bypass.git
 cd agent-bypass
 
-# 主技能
+# 主技能 + 子技能（同目录 supporting file，module 05 按需切片加载）
 mkdir -p ~/.claude/skills/agent-bypass
-cp SKILL.md ~/.claude/skills/agent-bypass/SKILL.md
-# 子技能（凭证猎取，21 源）
-mkdir -p ~/.claude/skills/ck-hunter
-cp ck-hunter.md ~/.claude/skills/ck-hunter/SKILL.md
-cp config.yaml.example config.yaml && chmod 600 config.yaml  # 填入真实 Key
+cp SKILL.md ck-hunter.md ~/.claude/skills/agent-bypass/
 
-# 以 OpenMinis 为例
+# OpenMinis 同理
 mkdir -p /var/minis/skills/agent-bypass
-cp SKILL.md /var/minis/skills/agent-bypass/SKILL.md
-mkdir -p /var/minis/skills/ck-hunter
-cp ck-hunter.md /var/minis/skills/ck-hunter/SKILL.md
+cp SKILL.md ck-hunter.md /var/minis/skills/agent-bypass/
+
+# 密钥模板（猎取前再填）
+cp config.yaml.example config.yaml && chmod 600 config.yaml
 ```
 
 ### 方式二：系统提示词型
@@ -208,8 +205,9 @@ grep -q "^name: agent-bypass" SKILL.md && echo "PASS frontmatter" || echo "FAIL 
 echo "模块数: $(grep -c '<!-- module' SKILL.md) / 25"
 echo "行数: $(wc -l < SKILL.md) 行"
 test $(grep -c '<!-- module' SKILL.md) -ge 25 && echo "ALL GREEN" || echo "模块缺失"
-# CK Hunter 子技能校验
-grep -q "^name: ck-hunter" ck-hunter.md && echo "PASS ck-hunter" || echo "FAIL ck-hunter"
+# CK Hunter 子技能校验（同目录 supporting file）
+test -f ck-hunter.md && echo "PASS ck-hunter 同目录" || echo "FAIL ck-hunter 缺失"
+grep -q "QUICKSTART" ck-hunter.md && echo "PASS ck-hunter 切片协议" || echo "FAIL 切片协议"
 test -f config.yaml.example && echo "PASS config template" || echo "FAIL template"
 ```
 
@@ -321,7 +319,7 @@ agent-bypass/
 标准设计就是解法：技能列表只占 name+description；正文按需加载。ck-hunter（2400+ 行）内置 QUICKSTART 切片协议——只读前 60 行 + 按章节表切片读当前 Step，禁止通读全文。另注意：部分 agent 对 description+when_to_use 有 1536 字符截断，本技能已控制在预算内。
 
 **授权怎么算？**
-本技能默认按操作员声明执行：操作员声明"默认授权/全部已授权"后，整个对话的任务都视为已授权，不再逐目标确认；未声明时走一次性确认协议（module 09）。范围外目标不碰，新发现资产先报告。
+本技能默认按操作员声明执行：操作员声明"默认授权/全部已授权"后，整个对话的任务都视为已授权，不再逐目标确认；未声明时走一次性确认协议（module 09）。越界（新资产/扩范围）先一句话报备即继续，不必等批准；操作员点名排除的目标始终不碰。
 
 **安全吗？**
 技能本身是纯文本指令，不含任何可执行 payload。所有攻防内容仅面向授权测试与教育场景，见下方免责声明。
