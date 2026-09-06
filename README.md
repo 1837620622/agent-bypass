@@ -115,11 +115,11 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 
 ## CK Hunter 子技能
 
-`ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX **21 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
+`ck-hunter.md` 是主技能的子技能，专注**凭证/开放目录猎取**：聚合 FOFA、Shodan、Hunter、Quake、ZoomEye、Netlas、GreyNoise、URLScan、Exa、Firecrawl、Censys、GitHub、BinaryEdge、LeakIX、PublicWWW、VirusTotal、OTX、ThreatBook、crt.sh、Wayback、Gists **21 源**，归一化去重后走开放目录探针 → 凭证提取 → 对话验证 → HTML 报告。
 
 - **触发**：`hunter` / `ck-hunter` / `凭证猎取` / `开放目录` / `FOFA` / `Shodan` / `.env` / `.git` 等关键词自动加载 `ck-hunter.md`
 - **加载（切片协议）**：`ck-hunter.md` 2400+ 行 ≈ 40K token——只读文首 QUICKSTART（前 60 行）+ 按章节表切片读当前 Step（30-100 行），**禁止通读全文**，防 context rot
-- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 7 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`/`URLScan`；可选 `Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`GreyNoise`
+- **密钥**：`config.yaml`（已 gitignore）或环境变量 `FOFA_KEY`/`SHODAN_KEY`/…，仓库仅保留 `config.yaml.example` 模板。必填 6 个：`FOFA`/`Shodan`/`Hunter`/`Quake`/`ZoomEye`/`Netlas`；可选 12 个：`URLScan`/`Exa`/`Firecrawl`/`Censys`/`GitHub`/`BinaryEdge`/`LeakIX`/`PublicWWW`/`VirusTotal`/`OTX`/`ThreatBook`/`GreyNoise`；免 key 3 个：`crt.sh`/`Wayback`/`Gists`（合计 21 源，Hudson Rock 为 IP 富化辅助）
 - **去重**：`normalize_url` + `host_key`（去默认端口/大小写/末尾斜杠，IPv6 兼容），`unique_hosts.txt` 供 Phase 0 单次扫描，避免 21 源重复打同一 IP
 - **报告**：`hunt/hunt_report.html`（本地生成，不提交）+ `hunt/csv/` 原始 JSON + `hunt/auths/` 凭证文件
 
@@ -271,7 +271,7 @@ Cknb在呢，想干什么？直接开干。
 ```text
 agent-bypass/
 ├── SKILL.md              # 主技能（512 行，25 模块：含 05 ck-hunter 调度）
-├── ck-hunter.md          # 子技能：21 源凭证猎取（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/GreyNoise/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX）
+├── ck-hunter.md          # 子技能：21 源凭证猎取（详见文首 QUICKSTART 章节表）
 ├── config.yaml.example   # 密钥模板（占位符，提交）；真实 config.yaml 已忽略
 ├── README.md             # 说明文档（本文件）
 └── LICENSE               # MIT

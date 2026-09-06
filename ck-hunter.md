@@ -12,7 +12,7 @@ description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + U
 **执行顺序**：`Step 0 密钥 → Step 1 聚合 21 源 → Step 1.9 域扩张 → Step 2 归一化去重 → Phase 0/0B 开放目录探针 → Phase 1-5D 凭证提取 → Phase 6 对话验证/余额 → Step 10 HTML 报告`
 
 **核心循环 6 步**：
-1. **密钥**：`config.yaml`（模板 `config.yaml.example`）或环境变量；必填 6：FOFA/SHODAN/HUNTER/QUAKE/ZOOMEYE/NETLAS；可选：URLSCAN/EXA/FIRECRAWL/CENSYS/GITHUB/BINARYEDGE/LEAKIX/PUBLICWWW/VT/THREATBOOK/GREYNOISE。**无 key 的源自动跳过（已内置守卫），缺 key 不阻塞流程**。
+1. **密钥**：`config.yaml`（模板 `config.yaml.example`）或环境变量；必填 6：FOFA/SHODAN/HUNTER/QUAKE/ZOOMEYE/NETLAS；可选 12：URLSCAN/EXA/FIRECRAWL/CENSYS/GITHUB/BINARYEDGE/LEAKIX/PUBLICWWW/VT/OTX/THREATBOOK/GREYNOISE。**无 key 的源自动跳过（已内置守卫），缺 key 不阻塞流程**。
 2. **输入**：`hunt/targets.txt`（每行一个 URL/域名）；没给就先跑 Step 1/2，从 `unique_hosts.txt` 提取域名回填再重跑 Step 1.9。
 3. **聚合**：各源脚本按 Step 1 分页拉满 → `hunt/raw/*.jsonl`。
 4. **归一化**：`normalize_url` + `host_key`（去默认端口/大小写/末尾斜杠，IPv6 兼容）→ `hunt/unique_hosts.txt`。
