@@ -14,7 +14,7 @@ description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + U
 **核心循环 6 步**：
 1. **密钥**：`config.yaml`（模板 `config.yaml.example`）或环境变量；必填 6：FOFA/SHODAN/HUNTER/QUAKE/ZOOMEYE/NETLAS；可选 12：URLSCAN/EXA/FIRECRAWL/CENSYS/GITHUB/BINARYEDGE/LEAKIX/PUBLICWWW/VT/OTX/THREATBOOK/GREYNOISE。**无 key 的源自动跳过（已内置守卫），缺 key 不阻塞流程**。
 2. **输入**：`hunt/targets.txt`（每行一个 URL/域名）；没给就先跑 Step 1/2，从 `unique_hosts.txt` 提取域名回填再重跑 Step 1.9。
-3. **聚合**：各源脚本按 Step 1 分页拉满 → `hunt/raw/*.jsonl`。
+3. **聚合**：各源脚本按 Step 1 聚合 → `hunt/raw/*.jsonl`；**FOFA 必须先查额度、先 count 看量级、判断必要性再拉取**（见 Step 1 额度纪律），禁止无脑分页拉满。
 4. **归一化**：`normalize_url` + `host_key`（去默认端口/大小写/末尾斜杠，IPv6 兼容）→ `hunt/unique_hosts.txt`。
 5. **探针+提取**：alive 探测 → 目录扫描（`dirs.txt`）→ 凭证提取（hermes/.env/.git/ssh/npmrc 等 80+ 模式）→ 直连探活。
 6. **验证+报告**：API key 对话验证/查余额 → `hunt/hunt_report.html`（kill-ai-slop 风格）。**`hunt/` 已 gitignore，禁止 `git add hunt/`。**
@@ -131,8 +131,21 @@ mkdir -p hunt/{csv,auths}
 
 ### Step 1: 10源分页全量下载（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan/Exa/Firecrawl，21目标）
 
-> **v4 改进**：原 v3 每次只拉 500 条（覆盖率 3-30%），v4 自动翻页直到拿满 total。
+> **v4 改进**：原 v3 每次只拉 500 条（覆盖率 3-30%），v4 自动翻页直到拿满 total。**但拉满前必须先过下面的额度纪律，别无脑翻页**。
 > 注意：fields 含 `header` 时 FOFA 高级会员单页上限 **2000**（不含 header 可到 5000）；单查询（同一 qbase64）最多返回 **10000** 条，超限需拆条件（见下方说明）。
+
+### FOFA 额度纪律（拉取前判断流程，必做）
+
+FOFA 查询/返回额度按自然月重置，浪费了当月就没了。**每个目标拉取前按顺序过这 5 步**：
+
+1. **查余额（熔断）**：先调 `GET /api/v1/info/my?key=<KEY>`（或 `/api/v1/users/my`），读 `remain_api_query` / `remain_api_data` / `fofa_point`。返回额度已 < 本次预计拉取量时**直接停手**，只保留必要的高价值源（如 hermes/opencode/.git），其余源等重置或换免费源，禁止硬拉。
+2. **先 count 后拉取**：用 `size=1` 发一次查询，看 `total` 判断量级，**不要直接分页**。total 是条数预估，size=1 几乎不耗返回额度。
+3. **必要性判断（思考顺序）**：
+   - 这个目标 FOFA 是不是最优源？21 源里 crt.sh/Wayback/OTX 免费的能覆盖就先走免费的，FOFA 留给测绘强项（端口/协议/标题/指纹）。
+   - 语法验证过没有？新语法一律 size=100 试跑，确认命中内容对味再加大，别拿 2000 页试错。
+   - 命中量级多大？`total < 5000` 直接拉满；`5千-5万` 收窄语法（叠 `after="2025-01-01"` / `country="CN"` / `status_code="200"` / `is_honeypot=false` / 精确 `==` 代替大范围 `body=`）或抽 `size=100` 验证；`>5万` 必须收窄到万级以下，或改用统计接口（`/api/v1/stats/...`）看分布，不拉明细。
+4. **省额度写法**：不加 `full=true`（默认一年内数据即可）；fields 能短就短（`ip,port,host,title,domain`），**别带 header/cert/banner/body/icon 大字段**（单页上限还会降到 500-2000）；同一条语句不要拉两遍——`hunt/raw/` 本地已有就跳过；网页下载与 API 共用返回额度，适合大导出但同样受剩余额度限制，下载记录 30 天过期。
+5. **拉完即存**：结果落 `hunt/raw/*.jsonl` 后立刻从输出中移除原始响应，避免重复拉取同一批数据。
 
 ```bash
 # FOFA 官方 API（key 从服务器 config.yaml 读取，不硬编码明文）
