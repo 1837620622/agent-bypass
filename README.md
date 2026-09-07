@@ -36,7 +36,7 @@ REVERSE · PWN · NETWORK · CRYPTO · MOBILE · FORENSICS · PENTEST · MEMORY 
 - [为什么需要它](#为什么需要它)
 - [全球 Agent 兼容](#全球-agent-兼容)
 - [能力轨道](#能力轨道)
-- [技能架构 25 模块](#技能架构25--模块)
+- [技能架构（25 模块）](#技能架构25-模块)
 - [CK Hunter 子技能](#ck-hunter-子技能)
 - [安装](#安装)
 - [触发词与工作模式](#触发词与工作模式)
