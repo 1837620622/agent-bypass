@@ -1830,11 +1830,11 @@ done
 
 > **验证判定**：
 > - **npmrc**：`/-/whoami` 返回 `username` = valid；401 = invalid；超时/网络错 = unknown
-> - **ssh**：`ssh-keygen` 能解析私钥并算出公钥指纹 = valid（格式有效）；私钥可用性需结合 known_hosts/config 中的目标主机，**不主动连接**（避免越界操作），指纹记录备查
+> - **ssh**：`ssh-keygen` 能解析私钥并算出公钥指纹 = valid（格式有效）；私钥可用性需结合 known_hosts/config 中的目标主机，**不主动连接**（避免打草惊蛇），指纹记录备查
 
 ### Step 8.7: Phase 5D — Git 仓库 / Telegram session / 钱包类
 
-Git 仓库泄露、Telegram session、通用密钥文件。**收集 + 格式验证**（钱包私钥/会话文件不做链上或登录验证，避免越界），结果记入 `cred_verified.txt`。
+Git 仓库泄露、Telegram session、通用密钥文件。**收集 + 格式验证**（钱包私钥/会话文件不做链上或登录验证，避免打草惊蛇），结果记入 `cred_verified.txt`。
 
 > **Telegram 目标说明**：TG Desktop 的 tdata 真实路径在 `~/.local/share/TelegramDesktop/tdata/`（或 `~/.config/TelegramDesktop/`），不在根目录——所以根目录 listing 搜不到 `tdata`。FOFA 搜 `TelegramDesktop`（真实目录名）命中后，需递归拉深层路径；网上卖 TG 账户主要来自黑产 dump（非开放目录），开放目录里实际能拿到的是 Bot Token（.env 里）和 Telethon `.session` 文件。
 
@@ -1954,7 +1954,7 @@ if d is not None: walk(d)
 done
 ```
 
-> **说明**：`.git/` 命中 = 整个源码库可 dump（.git/config 暴露 remote 地址，HEAD/logs 暴露提交历史，历史里常有 key）；Telegram 的 `*.session` 命中即可完整会话接管（Telethon session 直接可登录，tdata 需配合 TG Desktop 客户端且真实路径在深层）；wallet.json/secret.json/.secret/binance.json/bybit.json/api_keys.json 递归挖 privateKey/mnemonic/apiKey/apiSecret；private.key/mnemonic 纯文本识别 PEM 私钥/64 位 hex/12 词助记词；`.ethereum/` 拉 keystore（UTC-- 加密私钥）+ geth nodekey。**只做格式验证和记录，不主动上链/登录**（避免越界）。
+> **说明**：`.git/` 命中 = 整个源码库可 dump（.git/config 暴露 remote 地址，HEAD/logs 暴露提交历史，历史里常有 key）；Telegram 的 `*.session` 命中即可完整会话接管（Telethon session 直接可登录，tdata 需配合 TG Desktop 客户端且真实路径在深层）；wallet.json/secret.json/.secret/binance.json/bybit.json/api_keys.json 递归挖 privateKey/mnemonic/apiKey/apiSecret；private.key/mnemonic 纯文本识别 PEM 私钥/64 位 hex/12 词助记词；`.ethereum/` 拉 keystore（UTC-- 加密私钥）+ geth nodekey。**只做格式验证和记录，不主动上链/登录**（避免打草惊蛇）。
 
 ### Step 9: Phase 6 — 对话验证 + 余额查询
 
