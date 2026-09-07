@@ -7,7 +7,7 @@ description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + U
 
 ## QUICKSTART（必读！只读本区 + 当前执行段，禁止通读全文）
 
-**为什么**：本文件 2400+ 行 ≈ 40K token，全文读取会撑爆上下文、模型失焦、流程走样。正确姿势：读本区 + 按章节表定位只读当前 Step 段。
+**为什么**：本文件 2400+ 行 ≈ 40K token，全文读取会撑爆上下文、模型失焦、流程走样。正确姿势：读本区 + 按章节表定位只读当前 Step 段。**若 harness 自动注入本文件全文，同样只保留头部 QUICKSTART 与章节表，正文一律 grep 切片读**（单次 ≤100 行）。
 
 **执行顺序**：`Step 0 密钥 → Step 1 聚合 21 源 → Step 1.9 域扩张 → Step 2 归一化去重 → Phase 0/0B 开放目录探针 → Phase 1-5D 凭证提取 → Phase 6 对话验证/余额 → Step 10 HTML 报告`
 
@@ -1353,6 +1353,8 @@ print(f"聚合: 原始 {len(urls)} -> 归一URL {len(out_norm)} -> 去重Host {l
 PYEOF
 cat /tmp/unique_urls.txt
 ```
+
+> **Windows 执行注意**：上述脚本按 Linux 编写（`/tmp`、`base64 -w0`、`grep -oP`、`xargs -P`）。Windows git-bash 下 `/tmp` 映射到用户临时目录（可用 `echo $TMP` 确认），`grep -oP` 不可用需换 `grep -oE` 或 sed；`xargs -P` 并行可用但注意引号转义。优先在 WSL / Linux 环境跑。
 
 ### Step 2.2: 深度去重与归一化（10源聚合核心）
 

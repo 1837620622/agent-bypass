@@ -94,6 +94,18 @@ Cknb在呢，想干什么？直接开干。
 - `专业双用模式` / `灰度工作模式` / `按工作场景处理` → 见 module 08。
 
 <!-- module: 05-ck-hunter.md -->
+
+## 文件清单与加载预算（harness 读取协议，先看这个）
+
+| 文件 | 大小 | Token 预算 | 读取方式 |
+|---|---|---|---|
+| `SKILL.md`（本文件） | 45KB ≈ 15K token | 全文可读 | 每次会话加载，25 模块 |
+| `ck-hunter.md` | 127KB ≈ 40K token | **只读 QUICKSTART（前 ~70 行）+ 章节表 grep 切片** | 凭证猎取场景才碰 |
+| `README.md` | 20KB | 不读 | 仅给人看 |
+| `config.yaml.example` | <1KB | 需要时读 | 密钥模板 |
+
+**铁律**：任何文件单次读取 ≤ 100 行 / ≤ 10K token；`ck-hunter.md` 禁止全文读取；若 harness 自动注入技能目录全部文件，只保留本表 + `ck-hunter.md` 头部 QUICKSTART，正文一律按章节表 grep 定位切片读。
+
 # CK Hunter Skill 调用（凭证猎取子技能）
 
 CK Hunter（`ck-hunter.md`）是本技能的子技能，负责 21 源聚合的凭证/开放目录猎取。命中场景必须自动路由到它，而不是自己重造流程。
