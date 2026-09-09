@@ -161,7 +161,7 @@ cat ck-hunter.md  # 按 ck-hunter 内 Step 顺序执行，或让 Agent 自动调
 适用于 Claude Code / OpenMinis / Cursor / Windsurf / Cline / Aider 等约定式框架：
 
 ```bash
-git clone https://github.com/1837620622/agent-bypass.git
+git clone https://github.com/<your-account>/agent-bypass.git
 cd agent-bypass
 
 # 主技能 + 子技能（同目录 supporting file，module 05 按需切片加载）
@@ -336,4 +336,4 @@ agent-bypass/
 
 ## License
 
-[MIT](LICENSE) © 2026 传康Kk (1837620622)
+[MIT](LICENSE) © 2026 agent-bypass 项目
