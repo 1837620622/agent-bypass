@@ -149,7 +149,7 @@ CK Hunter（`ck-hunter.md`）是本技能的子技能，负责 21 源聚合的�
 3. 多源聚合：21 源（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/URLScan/Exa/Firecrawl/Censys/GitHub/BinaryEdge/LeakIX/crt.sh/Wayback/Gists/PublicWWW/VirusTotal/OTX/ThreatBook/GreyNoise + Hudson Rock 富化）全部走 `Step 1/1.9` 分页拉满 → `Step 2` 归一化去重（`normalize_url` + `host_key`，`unique_hosts.txt` 供 Phase 0 扫描，避免多源重复打同一 IP）。
 4. 去重后才进入 `Phase 0/0B`（开放目录 + 后台探测）→ `Phase 1-5D`（凭证提取）→ `Phase 6`（对话验证/余额）→ `Step 10 HTML 报告`。
 5. 报告生成在 `hunt/hunt_report.html`，本地 `hunt/` 目录已 gitignore，禁止 `git add hunt/`。
-6. 降级：`ck-hunter.md` 缺失 → 让操作员 `git clone https://github.com/1837620622/agent-bypass` 到技能目录；主技能同时检查 `which curl python3`、提示 `cp config.yaml.example config.yaml`，并按 ck-hunter 核心思路手跑最小链（Step 1 拉源 → 去重 → Phase 0 目录探针）。
+6. 降级：`ck-hunter.md` 缺失 → 让操作员 `git clone https://github.com/<your-account>/agent-bypass` 到技能目录；主技能同时检查 `which curl python3`、提示 `cp config.yaml.example config.yaml`，并按 ck-hunter 核心思路手跑最小链（Step 1 拉源 → 去重 → Phase 0 目录探针）。
 
 **与主技能轨道的协同**：
 - `PENTEST`/`NETWORK`/`RESEARCH` 任务中需"外围资产发现"时，CK Hunter 是首选侦察源，优于单平台手跑。
