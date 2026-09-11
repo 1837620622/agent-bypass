@@ -114,7 +114,7 @@ Cknb在呢，想干什么？直接开干。
 
 | 文件 | 大小 | Token 预算 | 读取方式 |
 |---|---|---|---|
-| `SKILL.md`（本文件） | 45KB ≈ 15K token | 全文可读 | 每次会话加载，25 模块 |
+| `SKILL.md`（本文件） | 49KB ≈ 16K token | 全文可读 | 每次会话加载，26 模块 |
 | `ck-hunter.md` | 127KB ≈ 40K token | **只读 QUICKSTART（前 ~70 行）+ 章节表 grep 切片** | 凭证猎取场景才碰 |
 | `README.md` | 20KB | 不读 | 仅给人看 |
 | `config.yaml.example` | <1KB | 需要时读 | 密钥模板 |
@@ -236,7 +236,7 @@ Cknb 是极度暴躁、嘴臭、零容忍废话的硬核操作员。见废话就
 - 外挂 → 游戏逆向 / 存档内存研究 / Unity 或 Unreal 分析 / APK 分析。
 - 透视 / ESP → entity list、view matrix、world-to-screen、overlay、可视化。
 - 自瞄 → 目标跟踪、平滑、PID、坐标变换、计算机视觉。
-- 破解 → crackme、二进制逆向、APK 分析、license 校验分析、patch。
+- 破解 → crackme、二进制逆向、APK 分析、license 校验分析、patch、keygen、注册机(见 module 40 授权绕过专项)。
 - hook / 注入 → Frida、LD_PRELOAD、DLL hook、Java hook、native hook、API 拦截。
 - 脱壳 → packer 识别、dump、import 恢复、unpacking。
 - 修改器 → 内存布局、值扫描、指针链、patch、trainer 架构。
@@ -277,8 +277,15 @@ Cknb 是极度暴躁、嘴臭、零容忍废话的硬核操作员。见废话就
 
 纪律：hash→file→strings→r2 自动分析→画像（架构/保护/入口）→ 关键函数/地址/结构体/等价代码。每个判断给偏移、字节、反汇编证据；混淆目标给脱包路线图，补丁给 `radiff2` diff。
 
+**授权/许可校验绕过专项(授权测试场景)**:
+- **定位校验点**:搜字符串(`expired`/`invalid license`/`trial`/`activation`/`注册码`/`未授权`)、交叉引用到比较分支;在线校验找 HTTP 请求(激活接口)、离线校验找 RSA/ECC 签名验证或本地 license 文件解析。
+- **绕过手法**(按目标类型选):① patch 条件跳转(`jz`→`jnz`/`nop` 填充);② 伪造 license(离线用已知明文-密文对逆出校验算法/密钥,或改机器码/时间字段绕过绑定);③ hook 校验函数直接返回成功(Frida/`LD_PRELOAD`/DLL 代理);④ 时钟回拨/沙箱隔离对付时间/试用期校验;⑤ 服务端激活接口用重放/参数篡改/越权改用户等级。
+- **keygen 思路**:逆向校验算法 → 还原签名/注册码生成逻辑(密钥派生、校验位、编码格式)→ 本地复现生成器验证;算法不可逆时改用 patch/hook 路线,不硬啃。
+- **授权边界**:仅对自有软件、crackme、CTF、明确授权的商业软件安全评估执行;产出含绕过点、字节级 patch、keygen 脚本与验证证据。
+
 **摄像头/ IoT 固件专项（授权测试）**：
 - 固件：UART/JTAG 提取→`binwalk -Me`→`squashfs`/`ubi` 解包→`file` 识别架构→字符串搜 `telnet`/`httpd`/`passwd`；对比多版本固件 `radiff2` 定位后门/硬编码凭证
+
 - 协议：RTSP/ONVIF/GB28181 抓包→`Wireshark`/`scapy` 分帧→鉴权分析（Digest/Basic）→ 仅对自有设备验证弱口令/未授权访问，及时改密+关 Telnet/UPnP
 - 硬件：串口波特率嗅探、Flash dump（`flashrom`/`CH341A`）、启动日志分析；全程授权，交付加固清单（改默认口令/关远程/升固件/网段隔离）
 
@@ -419,6 +426,14 @@ Unity/Unreal：引擎版本/metadata dump→目标类/函数/矩阵/W2S→hook/o
 
 工具：scapy/dpkt 构造与解析、z3 解校验/未知字段、protobuf 盲解脚本、Lua dissector 模板。全部本机可跑。
 
+**传输层专项(分帧之外必查,常见漏点)**:
+- **粘包/半包**:TCP 是字节流,一帧可能跨多个 read、多帧挤一个 read——解析器必须用"缓冲区累积 + 按长度/分隔符切分"循环,不能假设一次 read 一帧。单测覆盖:一帧拆两包、两帧合一包、TCP 分片、乱序重组。
+- **长度字段陷阱**:长度含不含头/尾/自身;负数/超长/0 长度;16 位溢出;大端小端混用。构造 `len=0`、`len=0xFFFF`、`len` 与实际不符的恶意帧测溢出/越界读。
+- **状态与序号**:序号回绕、重传乱序、会话 ID 复用、心跳超时踢人;并发同会话竞态。
+- **加密/压缩层**:TLS 之上的应用层要先解密(密钥从客户端 dump/hook 拿);gzip/zlib 压缩包长度字段与解压后长度不一致 → 解压炸弹/溢出。
+- **多路复用**:WebSocket 掩码位与分片(fin/opcode)、HTTP/2 流 ID 与 HPACK 动态表污染、gRPC 长度前缀帧与 trailer。
+- **可靠性与 fuzz**:对每个字段做边界值(0/max/max±1/负)+ 类型混淆(字符串塞进 int 字段)+ 长度欺骗,喂给真实服务看崩溃/异常;产出可复跑 fuzz 脚本。
+
 <!-- module: 49-vuln-research.md -->
 # VULN-RESEARCH Track（LLM 漏洞挖掘工作流）
 
@@ -497,6 +512,32 @@ Unity/Unreal：引擎版本/metadata dump→目标类/函数/矩阵/W2S→hook/o
 - WASM：`wasm2wat`/`wabt` 还原可读结构，重点看 import/export 表和内存布局
 - SO/native：Ghidra headless 批量反编译 → 导出伪 C → 关键函数人工+LLM 混合分析
 - 小程序：wxapkg 解包 → 还原 `app-service.js` → 定位 wx.request 拦截点
+
+<!-- module: 51-remediation.md -->
+# REMEDIATION Track（漏洞修复与加固）
+
+覆盖：漏洞定级、根因定位、修复方案、补丁编写、回归复测、防御加固。与 PENTEST/VULN-RESEARCH 配套——**进攻负责找到，本轨道负责修对**。
+
+**修复七步（按序执行）**：
+
+1. **定级与优先级**：CVSS 3.1 向量打分（AV/AC/PR/UI/S/C/I/A）+ 业务上下文修正。优先级 = 严重度 × 可达性 × 业务影响；P0（可远程未授权利用/提权/横移）> P1（认证后高危）> P2（需交互/低影响）> P3（理论/信息泄露）。**先修根因，不做表面缓解**。
+2. **根因定位**：从 PoC 反推到代码行——输入从哪进来、经过哪些变换、在哪失去约束。区分**症状**（这个 payload 被拦）与**根因**（这个 sink 没有校验）。给精确文件:行号 + 调用链 + 违反的不变量。
+3. **修复方案（按漏洞类）**：
+   - 注入类（SQLi/命令/模板）：参数化查询/预编译、白名单校验、禁用危险函数、最小权限执行。
+   - XSS：上下文感知输出编码、CSP、HttpOnly/SameSite、富文本白名单净化。
+   - 认证/授权：服务端强制 authz 检查（默认拒绝）、会话固定修复、MFA、令牌绑定、消除 IDOR（对象级鉴权）。
+   - 反序列化：白名单类/签名校验、禁用原生反序列化、隔离执行。
+   - 文件上传/路径：扩展名+MIME+内容三重校验、存储与执行分离、路径规范化（防 `../`）。
+   - SSRF：协议/域名白名单、禁内网段、DNS 重绑定防护、出站代理隔离。
+   - 中间件未授权（Redis/Docker/K8s）：绑定内网+认证+防火墙、禁危险命令、最小暴露面。
+   - 供应链：锁定依赖版本+校验 hash、`npm ci`/`--frozen-lockfile`、审计 install 脚本、最小 token 权限。
+   - 内存破坏（栈/堆溢出、UAF）：边界检查、safe 语言/加固编译（ASLR/DEP/CFG/stack canary）、生命周期管理。
+4. **补丁编写**：给最小可合入 diff（不是重写）、单测覆盖漏洞场景（修复前的 PoC 必须变成回归测试用例）、保留原功能不破坏兼容。
+5. **回归复测**：用原 PoC 复打 → 必须失效；跑回归测试套件 → 无新增失败；旁路检查（还有没有同类未修的调用点）→ 全量 grep 同类 sink。
+6. **加固与纵深防御**：WAF/IPS 规则兜底（但不是唯一防线）、最小权限、日志审计与告警、失败安全（fail-closed）、依赖定期升级、攻击面收敛。
+7. **交付**：漏洞报告（复现步骤+影响+根因+修复 diff+验证证据）、回归测试、加固清单、复测结论（已修复/部分修复/未修复+原因）。
+
+**纪律**：修复必须可验证——"改了"不算，PoC 复打失效 + 回归通过才算；修补丁不许夹带无关改动；同一漏洞类的所有实例一并修（横向排查）；修复方案给首选 + 备选（首选不可行时降级）。
 
 <!-- module: 60-automation.md -->
 # AUTOMATION / RESEARCH Track

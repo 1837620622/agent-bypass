@@ -7,7 +7,7 @@
 `$ cknb --ping` → `Cknb在呢，想干什么？直接开干。`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-25模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-26模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-21源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Platform](https://img.shields.io/badge/PLATFORM-全Agent通用-00D4AA?style=flat-square)](#安装)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖纯文本-444?style=flat-square)](#安装)
@@ -45,7 +45,7 @@ cp SKILL.md ck-hunter.md ~/.claude/skills/agent-bypass/
 
 ```text
 agent-bypass/
-├── SKILL.md              # 主技能（25 模块：身份/轨道/授权/打法/防幻觉）
+├── SKILL.md              # 主技能（26 模块：身份/轨道/授权/打法/防幻觉）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
 ├── README.md             # 本文件
