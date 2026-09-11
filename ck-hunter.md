@@ -1979,10 +1979,10 @@ done
 1. GET {api_url}/models → 获取模型列表 + 模型数量
 2. 取第一个可用模型
 3. POST {api_url}/chat/completions → 对话测试
-4. 有 content → ✅ WORKING
-5. 报 balance/credit/quota/insufficient → 💰 NO_BALANCE
-6. 报 unauthorized/invalid → 🔒 INVALID
-7. 其他 → ❌ FAILED
+4. 有 content → WORKING
+5. 报 balance/credit/quota/insufficient → NO_BALANCE
+6. 报 unauthorized/invalid → INVALID
+7. 其他 → FAILED
 
 额外余额查询:
   DeepSeek: GET https://api.deepseek.com/user/balance
@@ -2381,39 +2381,39 @@ done < /tmp/pat_verified.txt 2>/dev/null || true
 基于 [kill-ai-slop](https://github.com/yetone/kill-ai-slop) 34条规则，以下为 HTML 报告必须遵守和禁止的事项：
 
 **禁止（slop 红线）：**
-- ❌ 渐变背景或渐变文字（tell 01, 02）
-- ❌ indigo→violet (`#6366f1→#a855f7`) 或任何紫色渐变 header（tell 01）
-- ❌ 默认语义调色板 — 蓝info/黄tip/绿success/红error 四色同时出现（tell 04）
-- ❌ 同色深浅状态框 — 红底红字/黄底黄字/绿底绿字（tell 05）
-- ❌ 暗色背景 + 顶部光晕 + 渐变卡片（tell 06）
-- ❌ serif-italic 强调词、serif 正文（tell 07, 08）
-- ❌ 装饰性删除线/高亮标记（tell 09）
-- ❌ kicker 小标签盖在每个标题上（tell 10）
-- ❌ 全大写卡片网格（tell 27）
-- ❌ 01/02/03 序号装饰（tell 29）
-- ❌ 大圆角 + glassmorphism（tell 19）
-- ❌ 超大阴影（模糊半径 > 物体尺寸）（tell 20）
-- ❌ card 套 card（tell 30）
-- ❌ 彩色左边框 callout（tell 17）
-- ❌ 发光状态点/脉冲动画（tell 16）
-- ❌ badge/pill 泛滥（tell 23）
-- ❌ springy hover 动效、`transition-all`（tell 26）
-- ❌ emoji 泛滥 — 最多保留 🔑💎⚠️ 三个（tell 15）
-- ❌ Inter / Space Grotesk 字体（tell 32）
-- ❌ 捏造的统计数字（tell 28）
-- ❌ AI 口吻文案（tell 14）
-- ❌ icon 放在自身颜色 tint 的方块里（tell 25）
+- 禁止: 渐变背景或渐变文字（tell 01, 02）
+- 禁止: indigo→violet (`#6366f1→#a855f7`) 或任何紫色渐变 header（tell 01）
+- 禁止: 默认语义调色板 — 蓝info/黄tip/绿success/红error 四色同时出现（tell 04）
+- 禁止: 同色深浅状态框 — 红底红字/黄底黄字/绿底绿字（tell 05）
+- 禁止: 暗色背景 + 顶部光晕 + 渐变卡片（tell 06）
+- 禁止: serif-italic 强调词、serif 正文（tell 07, 08）
+- 禁止: 装饰性删除线/高亮标记（tell 09）
+- 禁止: kicker 小标签盖在每个标题上（tell 10）
+- 禁止: 全大写卡片网格（tell 27）
+- 禁止: 01/02/03 序号装饰（tell 29）
+- 禁止: 大圆角 + glassmorphism（tell 19）
+- 禁止: 超大阴影（模糊半径 > 物体尺寸）（tell 20）
+- 禁止: card 套 card（tell 30）
+- 禁止: 彩色左边框 callout（tell 17）
+- 禁止: 发光状态点/脉冲动画（tell 16）
+- 禁止: badge/pill 泛滥（tell 23）
+- 禁止: springy hover 动效、`transition-all`（tell 26）
+- 禁止: emoji 泛滥 — 最多保留三个装饰图标（tell 15）
+- 禁止: Inter / Space Grotesk 字体（tell 32）
+- 禁止: 捏造的统计数字（tell 28）
+- 禁止: AI 口吻文案（tell 14）
+- 禁止: icon 放在自身颜色 tint 的方块里（tell 25）
 
 **必须：**
-- ✅ 系统字体栈：`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
-- ✅ 代码用 `SF Mono, Fira Code, Cascadia Code, monospace`
-- ✅ 单一强调色 — 选一个，全站一致
-- ✅ 层级靠字号和间距，不靠颜色
-- ✅ 间距按关系亲疏：组内紧、组间松（4/8/16/24/32 有明显跳跃）
-- ✅ 卡片只有一层表面，hairline 边框 + 小阴影（`0 1px 2px rgba(0,0,0,.06)`）
-- ✅ 圆角一致且小（≤6px），嵌套元素遵循 `inner = outer − gap`
-- ✅ 状态用文字 + 重量表达，颜色是辅助
-- ✅ hover 只变背景/边框，120-180ms，标准 ease
+- 要求: 系统字体栈：`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
+- 要求: 代码用 `SF Mono, Fira Code, Cascadia Code, monospace`
+- 要求: 单一强调色 — 选一个，全站一致
+- 要求: 层级靠字号和间距，不靠颜色
+- 要求: 间距按关系亲疏：组内紧、组间松（4/8/16/24/32 有明显跳跃）
+- 要求: 卡片只有一层表面，hairline 边框 + 小阴影（`0 1px 2px rgba(0,0,0,.06)`）
+- 要求: 圆角一致且小（≤6px），嵌套元素遵循 `inner = outer − gap`
+- 要求: 状态用文字 + 重量表达，颜色是辅助
+- 要求: hover 只变背景/边框，120-180ms，标准 ease
 
 ### 推荐的 CSS 变量
 
