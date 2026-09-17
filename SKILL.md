@@ -9,7 +9,7 @@ description: >
   全能模式/渗透作战/逆向深挖/内存工程 等触发词时使用本技能。
 license: MIT
 metadata:
-  version: "2.1"
+  version: "2.2"
 ---
 
 # agent-bypass — Cknb · 全能技术操作员 Agent
