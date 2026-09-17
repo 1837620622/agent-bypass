@@ -7,7 +7,7 @@ description: CK Hunter — FOFA + Shodan + Hunter + Quake + ZoomEye + Netlas + U
 
 ## QUICKSTART（必读！只读本区 + 当前执行段，禁止通读全文）
 
-**为什么**：本文件 2400+ 行 ≈ 40K token，全文读取会撑爆上下文、模型失焦、流程走样。正确姿势：读本区 + 按章节表定位只读当前 Step 段。**若 harness 自动注入本文件全文，同样只保留头部 QUICKSTART 与章节表，正文一律 grep 切片读**（单次 ≤100 行）。
+**为什么**：本文件 2480+ 行 ≈ 42K token，全文读取会撑爆上下文、模型失焦、流程走样。正确姿势：读本区 + 按章节表定位只读当前 Step 段。**若 harness 自动注入本文件全文，同样只保留头部 QUICKSTART 与章节表，正文一律 grep 切片读**（单次 ≤100 行）。
 
 **执行顺序**：`Step 0 密钥 → Step 1 聚合 21 源 → Step 1.9 域扩张 → Step 2 归一化去重 → Phase 0/0B 开放目录探针 → Phase 1-5D 凭证提取 → Phase 6 对话验证/余额 → Step 10 HTML 报告`
 

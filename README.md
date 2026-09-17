@@ -45,12 +45,22 @@ cp SKILL.md ck-hunter.md ~/.claude/skills/agent-bypass/
 
 ```text
 agent-bypass/
-├── SKILL.md              # 主技能（26 模块，589 行）
+├── SKILL.md              # 主技能（26 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
 ├── README.md             # 本文件
 └── LICENSE               # MIT
 ```
+
+## 研究参考
+
+本技能的方法论与安全机制受以下公开研究启发：
+
+- [A New Framework for Cybersecurity Refusals in AI Agents](https://arxiv.org/abs/2606.02644) — 授权安全评估场景下的拒绝边界框架（授权上下文完整性设计依据）
+- [OWASP GenAI: LLM01 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) — 提示注入与越狱分类
+- [Agent Skills 开放标准](https://agentskills.io/specification) — SKILL.md 格式规范（frontmatter 字段与渐进披露）
+- [HarmBench human jailbreaks](https://github.com/centerforaisafety/HarmBench) — 越狱模板结构分析（自我破甲纪律设计参考）
+- [Rules of Engagement 模板](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) — 渗透授权 ROE schema
 
 ## 免责声明（使用前完整阅读）
 
