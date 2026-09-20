@@ -459,16 +459,22 @@ Unity/Unreal：引擎版本/metadata dump→目标类/函数/矩阵/W2S→hook/o
 - **供应链投毒攻击面**：依赖投毒（npm/pip/Composer/Maven/Go/Gem 的 typosquatting 近名包、install 脚本/postinstall 恶意代码、lockfile 里混入恶意版本、同版本号覆盖发布）；GitHub Actions 投毒（工作流依赖未固定版本、恶意 fork 替换、`pull_request_target` 滥用偷 secrets）；源码投毒（README 里的恶意安装命令、star 农场、仓库接管）；镜像/固件投毒。**检测向**：审计目标 lockfile/依赖树、逐个过 install 脚本、对比官方 hash 与 registry 记录。**利用向**：目标依赖链上找可投毒点（近名包抢注、私有依赖接管、构建脚本篡改），投毒后借目标 CI/构建链扩散到下游。
 - **扩散思维（单点→面，必做）**：一个漏洞不只有一个利用点——同组件版本用 FOFA 指纹全网扫、同一代码模式在目标其他接口复用；一个凭据试所有服务/所有主机（凭据复用）；一台机器打穿后内网横向（SSH 复用/ARP/域渗透）→ 云元数据 → 凭据库 → 供应链上下游；一个入口展开关联攻击面（同 IP 其他端口、同域名子域、同证书、同指纹）。打点只是开始，扩散到面才算交付。
 - 凭证攻击：登录爆破/凭证填充/密码喷洒全带锁定规避策略；撞库数据脱敏处理；全部产出可复跑脚本（并发/代理池/验证码接打码平台接口留桩）。
-- **爆破按场景选语言/工具（实测排序，别用错）**：
-  | 场景 | 最快方案 | 语言结论 |
+- **语言/工具选型（按场景，2026 实测，别用错）**：
+  | 场景 | 首选 | 关键数据/结论 |
   |---|---|---|
-  | 爆哈希 | hashcat+GPU（NTLM 164 GH/s、SHA256 9.8 GH/s） | GPU 前语言无意义；纯 CPU 时 Rust 反超 hashcat CPU 模式 ~1.5x |
+  | 端口扫描 | masscan/zmap(C) | zmap 144万 pps；masscan@100kpps 丢包 4.4%→准确率 95.9%，降到 10kpps 恢复 99.1%；RustScan+Nmap 交接 3m18s/99.2% |
+  | Web 目录/爆破 | ffuf(Go) | 1400 req/s（feroxbuster 950 / gobuster 500；Go≈Rust >> Python） |
   | 协议爆破(SSH/FTP/RDP) | legba(Rust)/hydra(C) | Rust≈C > Go > Python（medusa≈hydra，patator 最慢） |
-  | Web 目录/登录 | ffuf(Go) 1400 req/s | feroxbuster 950 / gobuster 500；Go≈Rust >> Python |
-  | 端口扫描 | masscan/zmap(C) | zmap 144万 pps；C > Rust |
-  | WiFi | hashcat -m 2200 + GPU | C 抓包→GPU 爆 |
-  | 分布式调度 | 自写编排 | Go 最合适 |
-  原则：已有高性能工具直接用（别用 Python 重写）；自写并发选 Rust/Go（tokio/goroutine），Python 仅限原型。
+  | 爆哈希 | hashcat+GPU | NTLM 164 GH/s、SHA256 9.8 GH/s；纯 CPU 时 Rust 反超 hashcat CPU 模式 ~1.5x |
+  | WiFi | hashcat -m 2200 + GPU | C 抓包 → GPU 爆 |
+  | 高并发网络/扫描器 | Go | 3-5万 conn/s（5-10x Python asyncio）；TCP 连接 Go 1.2M / Rust 1.1M / Python 180K |
+  | 低延迟/内存受限 | Rust | p99：Rust 9ms / Go 12ms / Python 110ms；内存 45MB / 120MB / 890MB（MQTT 稳态） |
+  | 包构造/高速发送 | C/Rust 原生 socket | scapy 仅限原型验证，别用它高速打流量 |
+  | fuzzing | libFuzzer/AFL++(C) | in-process 模式最快；Rust 用 cargo-fuzz，Go 用内置 fuzz |
+  | 分布式调度编排 | Go | 静态二进制+goroutine 天然适合多机并发 |
+  | 原型/exploit/数据分析 | Python | 开发速度优先，热点（并发/解析）下沉到 Rust/Go/C |
+  语言边界：Go=并发与工具生态（Nuclei/Sliver/Subfinder/Katana/Naabu 全是 Go）；Rust=低延迟/高吞吐解析/内存敏感；C=内核/eBPF/极限性能；Python=原型与 exploit 开发。
+  原则：已有高性能工具直接用（别用 Python 重写）；自写并发选 Rust/Go（tokio/goroutine）；精度纪律——扫描类盯内核丢包计数，>1% 立即降速重跑（准确率与丢包率直接挂钩）。
 - **限速绕过（先判定"按什么计数"，再选手段）**：
   1. **X-Forwarded-For/X-Real-IP 伪造**——最容易中：后端信任 XFF 且按它计数时直接无限速（每请求换随机 XFF 实测 25 连发 0×429）。
   2. 多出口轮转（代理池换 IP）/ 账号与会话轮换（多账号分摊 + cookie 池）。
