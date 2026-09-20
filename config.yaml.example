@@ -20,6 +20,7 @@
 
 fofa: "YOUR_FOFA_KEY_HERE"
 shodan: "YOUR_SHODAN_KEY_HERE"
+shodan2: ""  # 可选：备用 Shodan key，主 key 限额/报错时自动切换（双 key 轮换）
 hunter: "YOUR_HUNTER_KEY_HERE"
 quake: "YOUR_QUAKE_TOKEN_HERE"
 zoomeye: "YOUR_ZOOMEYE_KEY_HERE"

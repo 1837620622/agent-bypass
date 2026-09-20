@@ -90,6 +90,7 @@ hunt/
 ```yaml
 fofa: "YOUR_FOFA_KEY"
 shodan: "YOUR_SHODAN_KEY"
+shodan2: "YOUR_SHODAN_BACKUP_KEY"   # 可选：备用 key，主 key 无效/限额时自动切换（双 key 轮换）
 hunter: "YOUR_HUNTER_KEY"      # hunter.qianxin.com  https://hunter.qianxin.com/home/myInfo
 quake: "YOUR_QUAKE_TOKEN"      # quake.360.net  https://quake.360.net/quake/#/help  Header X-QuakeToken
 zoomeye: "YOUR_ZOOMEYE_KEY"    # api.zoomeye.ai  https://www.zoomeye.ai/profile  Header API-KEY
@@ -100,7 +101,7 @@ firecrawl: "YOUR_FIRECRAWL_KEY" # firecrawl.dev  https://www.firecrawl.dev/app/a
 greynoise: ""                  # 可选，未认证约 100 次/天（404=IP 不在库属正常，401 才缺 key）  https://viz.greynoise.io
 ```
 
-**加载优先级：** `config.yaml` > 环境变量（`FOFA_KEY` / `SHODAN_KEY` / `HUNTER_KEY` / `QUAKE_KEY` / `ZOOMEYE_KEY` / `NETLAS_KEY` / `URLSCAN_KEY` / `EXA_API_KEY` / `FIRECRAWL_API_KEY` / `GREYNOISE_KEY` / `PUBLICWWW_KEY` / `VT_APIKEY` / `THREATBOOK_KEY` / `OTX_KEY`）> `HUNTER_CONFIG` 指定路径。脚本内同时支持 `python3 -c "yaml.safe_load"` 与 `grep` 兜底，无 PyYAML 也能跑。
+**加载优先级：** `config.yaml` > 环境变量（`FOFA_KEY` / `SHODAN_KEY` / `SHODAN_KEY2`（备用） / `HUNTER_KEY` / `QUAKE_KEY` / `ZOOMEYE_KEY` / `NETLAS_KEY` / `URLSCAN_KEY` / `EXA_API_KEY` / `FIRECRAWL_API_KEY` / `GREYNOISE_KEY` / `PUBLICWWW_KEY` / `VT_APIKEY` / `THREATBOOK_KEY` / `OTX_KEY`）> `HUNTER_CONFIG` 指定路径。脚本内同时支持 `python3 -c "yaml.safe_load"` 与 `grep` 兜底，无 PyYAML 也能跑。
 
 **本地使用：**
 ```bash
@@ -108,7 +109,7 @@ cp config.yaml.example config.yaml
 # 填入真实 Key 后
 chmod 600 config.yaml
 # 或走环境变量（CI 推荐）
-export FOFA_KEY="xxx" SHODAN_KEY="xxx" HUNTER_KEY="xxx" QUAKE_KEY="xxx" ZOOMEYE_KEY="xxx" NETLAS_KEY="xxx" URLSCAN_KEY="xxx" EXA_API_KEY="xxx" FIRECRAWL_API_KEY="xxx"
+export FOFA_KEY="xxx" SHODAN_KEY="xxx" SHODAN_KEY2="xxx" HUNTER_KEY="xxx" QUAKE_KEY="xxx" ZOOMEYE_KEY="xxx" NETLAS_KEY="xxx" URLSCAN_KEY="xxx" EXA_API_KEY="xxx" FIRECRAWL_API_KEY="xxx"
 ```
 
 **防泄露自检（提交前必跑）：**
@@ -231,9 +232,13 @@ done
 
 ```bash
 # Shodan 平台（备选/交叉验证）
-# key 从服务器 config.yaml 读取（shodan 字段），不硬编码明文
+# key 从服务器 config.yaml 读取（shodan 主 + shodan2 备，自动轮换），不硬编码明文
 SHODAN_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('shodan','') or os.environ.get('SHODAN_KEY',''))" 2>/dev/null | tr -d ' \r\n')
 [ -z "$SHODAN_KEY" ] && SHODAN_KEY=$(grep -m1 -E '^\s*shodan:\s*[a-zA-Z0-9]' "${HUNTER_CONFIG:-./config.yaml}" 2>/dev/null | sed -E 's/^\s*shodan:\s*"?([^"]*)"?.*/\1/' | tr -d ' \r\n')
+# 双 key 轮换（v4.2）：主 key 无效/限额时自动切 shodan2（yaml + grep 双路径）
+SHODAN_KEY2=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('shodan2','') or os.environ.get('SHODAN_KEY2',''))" 2>/dev/null | tr -d ' \r\n')
+[ -z "$SHODAN_KEY2" ] && SHODAN_KEY2=$(grep -m1 -E '^\s*shodan2:\s*[a-zA-Z0-9]' "${HUNTER_CONFIG:-./config.yaml}" 2>/dev/null | sed -E 's/^\s*shodan2:\s*"?([^"]*)"?.*/\1/' | tr -d ' \r\n')
+CUR_SHODAN_KEY="$SHODAN_KEY"   # 当前生效 key（轮换后切换）
 for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
   case $TOOL in
     hermes)    BODY=".hermes" ;;
@@ -265,10 +270,20 @@ for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram ses
   while :; do
     curl -s --max-time 30 \
       "https://api.shodan.io/shodan/host/search" \
-      --data-urlencode "key=${SHODAN_KEY}" \
+      --data-urlencode "key=${CUR_SHODAN_KEY}" \
       --data-urlencode "query=${SQUERY}" \
       --data-urlencode "page=${PAGE}" \
       -G > "hunt/csv/${TOOL}_shodan_p${PAGE}.json"
+    # 双 key 轮换：无效 key 返回 HTML 401 页面（不含 "matches" 字段）→ 切备用 key 重试本页
+    if ! grep -q '"matches"' "hunt/csv/${TOOL}_shodan_p${PAGE}.json" 2>/dev/null && [ -n "$SHODAN_KEY2" ] && [ "$CUR_SHODAN_KEY" != "$SHODAN_KEY2" ]; then
+      CUR_SHODAN_KEY="$SHODAN_KEY2"
+      curl -s --max-time 30 \
+        "https://api.shodan.io/shodan/host/search" \
+        --data-urlencode "key=${CUR_SHODAN_KEY}" \
+        --data-urlencode "query=${SQUERY}" \
+        --data-urlencode "page=${PAGE}" \
+        -G > "hunt/csv/${TOOL}_shodan_p${PAGE}.json"
+    fi
     N=$(python3 -c "import json,sys;d=json.load(sys.stdin);print(len(d.get('matches',[])))" < "hunt/csv/${TOOL}_shodan_p${PAGE}.json" 2>/dev/null)
     [ -z "$N" ] && N=0
     GOT=$((GOT + N))
