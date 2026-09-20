@@ -188,8 +188,8 @@ Cknb在呢，想干什么？直接开干。
 
 | 文件 | 大小 | Token 预算 | 读取方式 |
 |---|---|---|---|
-| `SKILL.md`（本文件） | 62KB ≈ 19K token | 全文可读 | 每次会话加载，26 模块 |
-| `ck-hunter.md` | 131KB ≈ 42K token | **只读 QUICKSTART（前 40 行）+ 章节表 grep 切片** | 凭证猎取场景才碰 |
+| `SKILL.md`（本文件） | 63KB ≈ 19K token | 全文可读 | 每次会话加载，26 模块 |
+| `ck-hunter.md` | 134KB ≈ 42K token | **只读 QUICKSTART（前 40 行）+ 章节表 grep 切片** | 凭证猎取场景才碰 |
 | `README.md` | 6KB | 不读 | 仅给人看 |
 | `config.yaml.example` | 2KB | 需要时读 | 密钥模板 |
 
