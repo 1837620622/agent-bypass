@@ -45,9 +45,12 @@ const exists = (p) => { try { fs.accessSync(p); return true; } catch { return fa
 
 // 提取 系统提示词.md 的复制区（破甲块）
 function getBlock() {
-  const src = fs.readFileSync(path.join(ROOT, '系统提示词.md'), 'utf8');
+  const file = path.join(ROOT, '系统提示词.md');
+  if (!exists(file)) throw new Error('系统提示词.md 缺失，无法提取注入块');
+  const src = fs.readFileSync(file, 'utf8');
   const a = src.indexOf('\u2193\u2193\u2193');
   const b = src.indexOf('\u2191\u2191\u2191');
+  if (a === -1 || b === -1 || b <= a) throw new Error('系统提示词.md 复制区标记缺失（\u2193\u2193\u2193 / \u2191\u2191\u2191）');
   const s = src.indexOf('\n', a) + 1;
   const e = src.lastIndexOf('\n', b);
   return src.slice(s, e).trim();
@@ -95,9 +98,10 @@ function stripMarked(file, label) {
   const buf = fs.readFileSync(file);
   if (!isUtf8(buf)) { warn(`${label} 非 UTF-8，跳过`); return; }
   let cur = buf.toString('utf8');
+  const eol = cur.includes('\r\n') ? '\r\n' : '\n';
   const bi = cur.indexOf(MARK_B), ei = cur.indexOf(MARK_E);
   if (bi !== -1 && ei > bi) {
-    cur = (cur.slice(0, bi) + cur.slice(ei + MARK_E.length)).replace(/\n{3,}/g, '\n\n').trimEnd() + '\n';
+    cur = (cur.slice(0, bi) + cur.slice(ei + MARK_E.length)).replace(/(\r?\n){3,}/g, eol + eol).trimEnd() + eol;
     fs.writeFileSync(file, cur, 'utf8');
     ok(`${label} 标记块已移除`);
   }
@@ -190,13 +194,16 @@ function installMinis() {
   console.log('\n[OpenMinis]');
   installSkills('/var/minis/skills/agent-bypass');
   if (noInject) return;
-  if (injectGlobal && exists('/var/minis/memory/GLOBAL.md')) {
-    injectMarked('/var/minis/memory/GLOBAL.md', getBlock(), 'OpenMinis GLOBAL.md');
-  } else {
-    info('系统级注入（二选一，手动）：');
-    info('  A. 打开 Minis \u2192 Settings \u2192 Soul，把 系统提示词.md 复制区贴入');
-    info('  B. 或运行: npx agent-bypass --minis --inject-global（自动注入 GLOBAL.md）');
+  if (injectGlobal) {
+    if (exists('/var/minis/memory/GLOBAL.md')) {
+      injectMarked('/var/minis/memory/GLOBAL.md', getBlock(), 'OpenMinis GLOBAL.md');
+      return;
+    }
+    warn('GLOBAL.md 不存在（/var/minis/memory/GLOBAL.md），跳过自动注入');
   }
+  info('系统级注入（二选一，手动）：');
+  info('  A. 打开 Minis \u2192 Settings \u2192 Soul，把 系统提示词.md 复制区贴入');
+  info('  B. 或运行: npx agent-bypass --minis --inject-global（自动注入 GLOBAL.md）');
 }
 function uninstallMinis() {
   console.log('\n[OpenMinis]');
@@ -236,13 +243,22 @@ const map = {
   opencode: [installOpenCode, uninstallOpenCode],
   minis: [installMinis, uninstallMinis],
 };
+let failed = 0;
 for (const t of targets) {
   const [inst, uninst] = map[t];
-  if (uninstall) uninst(); else inst();
+  try {
+    if (uninstall) uninst(); else inst();
+  } catch (e) {
+    warn(`${t} 处理失败: ${e.message}`);
+    failed++;
+  }
 }
 
 console.log('\n' + '\u2500'.repeat(40));
-if (uninstall) {
+if (failed) {
+  console.log(`完成，但有 ${failed} 个目标处理失败（见上方警告）。`);
+  process.exitCode = 1;
+} else if (uninstall) {
   console.log('卸载完成。');
 } else {
   console.log('安装完成。');
