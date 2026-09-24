@@ -31,23 +31,31 @@
 **一键安装（推荐）** — npx 自动检测并安装到 **Pi / OpenCode / OpenMinis**：
 
 ```bash
-npx github:1837620622/agent-bypass        # GitHub 直跑（无需发布）
-npx agent-bypass                          # npm 发布后可直接用
+npx github:1837620622/agent-bypass        # GitHub 直跑（无需发布；npm 12+ 见下方说明）
+npx agent-bypass                          # 发布到 npm 后可用（未发布前请用 github:）
 npx agent-bypass --pi                     # 只装 Pi
 npx agent-bypass --opencode               # 只装 OpenCode
 npx agent-bypass --minis                  # 只装 OpenMinis
 npx agent-bypass --uninstall              # 卸载（标记块+技能文件全清）
 ```
 
-**npm 12+ 用户**（报 `EALLOWGIT`：npm 12 起 `allow-git` / `allow-remote` 默认 `none`，git 与 tarball-URL 依赖默认被禁）：
+**遇到 `EALLOWGIT`（npm 12+）？** npm 12 起 `allow-git` / `allow-remote` 默认 `none`，git 与 tarball-URL 依赖默认被禁——任选一种：
 
 ```bash
-npx -y --allow-git=all github:1837620622/agent-bypass    # 单次加旗标（推荐）
-npm config set allow-git all                              # 或持久开启，之后照常用 npx github:...
+# A. 单次旗标（推荐，不改你的全局配置）
+npx -y --allow-git=all github:1837620622/agent-bypass
 
-# 绕开 npm 直装（最稳，不依赖 npm 配置）：
+# B. 持久开启（之后照常用 npx github:...；恢复默认：npm config set allow-git none）
+npm config set allow-git all
+
+# C. 绕开 npm 直装（最稳，不依赖任何 npm 配置）
 mkdir -p agent-bypass && curl -L https://github.com/1837620622/agent-bypass/tarball/main | tar xz -C agent-bypass --strip-components=1 && node agent-bypass/bin/install.js
+
+# 附：tarball-URL 直跑（需 allow-remote）
+npx -y --allow-remote=all https://github.com/1837620622/agent-bypass/archive/refs/heads/main.tar.gz
 ```
+
+> `npx agent-bypass` 报 **404** = 包尚未发布到 npm registry；未发布前用 `github:` 方式即可。发布（维护者）：仓库根目录 `npm login && npm publish`。
 
 安装器行为（编码安全设计，零乱码）：
 
@@ -76,7 +84,10 @@ cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md ~/.config/opencode/skills/agent-bypass
 cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md /var/minis/skills/agent-bypass/    # OpenMinis
 ```
 
+> 以上仅复制技能文件；要连**三层注入 + `/ck` 命令**一起装，请用安装器（`node agent-bypass/bin/install.js`，或上方方案 C）。
+
 - `SKILL.md` + `ck-hunter.md` **必须同目录**——ck-hunter 是主技能的 supporting file，module 05 按需切片加载
+- **更新**：重跑安装命令即可（幂等——标记块只更新、不重复追加）
 - **验证**：发送 `ck` / `在` / `干` / `在吗` 任一，应回 `Cknb在呢，想干什么？直接开干。`
 - **CK Hunter 密钥**：`cp config.yaml.example config.yaml && chmod 600 config.yaml` 填入 Key（`config.yaml` 已被 .gitignore 忽略）
 
@@ -90,7 +101,7 @@ agent-bypass/
 ├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / OpenMinis
 ├── SKILL.md              # 主技能（26 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
-├── SYSTEM_PROMPT.md          # 纯注入内容：整段注入系统提示词层（Pi 第二层 / OpenCode instructions）
+├── SYSTEM_PROMPT.md      # 纯注入内容：整段注入系统提示词层（Pi 第二层 / OpenCode instructions）
 ├── pi/                   # Pi 三层注入文件（AGENTS.md 第一层 / prompts/ck.md 第三层）
 ├── opencode/             # OpenCode 命令文件（commands/ck.md）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
