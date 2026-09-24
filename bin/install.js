@@ -43,17 +43,13 @@ const warn = (m) => console.log('  \u26a0 ' + m);
 const info = (m) => console.log('  \u00b7 ' + m);
 const exists = (p) => { try { fs.accessSync(p); return true; } catch { return false; } };
 
-// 提取 系统提示词.md 的复制区（破甲块）
+// 读取 系统提示词.md 全文（纯注入内容）
 function getBlock() {
   const file = path.join(ROOT, '系统提示词.md');
   if (!exists(file)) throw new Error('系统提示词.md 缺失，无法提取注入块');
-  const src = fs.readFileSync(file, 'utf8');
-  const a = src.indexOf('\u2193\u2193\u2193');
-  const b = src.indexOf('\u2191\u2191\u2191');
-  if (a === -1 || b === -1 || b <= a) throw new Error('系统提示词.md 复制区标记缺失（\u2193\u2193\u2193 / \u2191\u2191\u2191）');
-  const s = src.indexOf('\n', a) + 1;
-  const e = src.lastIndexOf('\n', b);
-  return src.slice(s, e).trim();
+  const src = fs.readFileSync(file, 'utf8').trim();
+  if (!src) throw new Error('系统提示词.md 内容为空，无注入内容');
+  return src;
 }
 
 function installSkills(dir) {
@@ -202,7 +198,7 @@ function installMinis() {
     warn('GLOBAL.md 不存在（/var/minis/memory/GLOBAL.md），跳过自动注入');
   }
   info('系统级注入（二选一，手动）：');
-  info('  A. 打开 Minis \u2192 Settings \u2192 Soul，把 系统提示词.md 复制区贴入');
+  info('  A. 打开 Minis \u2192 Settings \u2192 Soul，把 系统提示词.md 全文贴入');
   info('  B. 或运行: npx agent-bypass --minis --inject-global（自动注入 GLOBAL.md）');
 }
 function uninstallMinis() {

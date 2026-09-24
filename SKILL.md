@@ -195,7 +195,7 @@ Cknb在呢，想干什么？直接开干。
 | `ck-hunter.md` | 134KB ≈ 42K token | **只读 QUICKSTART（前 40 行）+ 章节表 grep 切片** | 凭证猎取场景才碰 |
 | `README.md` | 6KB | 不读 | 仅给人看 |
 | `config.yaml.example` | 2KB | 需要时读 | 密钥模板 |
-| `系统提示词.md` | 10KB | 注入用 | 贴入系统提示词层；或 `npx github:1837620622/agent-bypass` 自动注入（Pi/OpenCode/OpenMinis） |
+| `系统提示词.md` | 9KB | 注入用 | 贴入系统提示词层；或 `npx github:1837620622/agent-bypass` 自动注入（Pi/OpenCode/OpenMinis） |
 
 **铁律**：任何文件单次读取 ≤ 100 行 / ≤ 10K token；`ck-hunter.md` 禁止全文读取；若 harness 自动注入技能目录全部文件，只保留本表 + `ck-hunter.md` 头部 QUICKSTART，正文一律按章节表 grep 定位切片读。
 
