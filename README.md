@@ -10,6 +10,7 @@
 [![SKILL.md](https://img.shields.io/badge/SKILL.md-26模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-21源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Standard](https://img.shields.io/badge/Agent_Skills-开放标准兼容-00D4AA?style=flat-square)](https://agentskills.io)
+[![Platforms](https://img.shields.io/badge/一键安装-Pi%20%7C%20OpenCode%20%7C%20OpenMinis-6E40C9?style=flat-square)](#快速开始)
 [![No-Dep](https://img.shields.io/badge/依赖-零依赖纯文本-444?style=flat-square)](#快速开始)
 
 </div>
@@ -27,27 +28,49 @@
 
 ## 快速开始
 
+**一键安装（推荐）** — npx 自动检测并安装到 **Pi / OpenCode / OpenMinis**：
+
 ```bash
-git clone https://github.com/1837620622/agent-bypass.git
-cd agent-bypass
-mkdir -p ~/.claude/skills/agent-bypass
-cp SKILL.md ck-hunter.md ~/.claude/skills/agent-bypass/
+npx github:1837620622/agent-bypass        # GitHub 直跑（无需发布）
+npx agent-bypass                          # npm 发布后可直接用
+npx agent-bypass --pi                     # 只装 Pi
+npx agent-bypass --opencode               # 只装 OpenCode
+npx agent-bypass --minis                  # 只装 OpenMinis
+npx agent-bypass --uninstall              # 卸载（标记块+技能文件全清）
 ```
 
-- **技能目录型框架**（Claude Code / OpenMinis / Cursor / OpenHands / Cline / Aider…）：复制 `SKILL.md` + `ck-hunter.md` 到技能目录（两个文件**必须同目录**——ck-hunter 是主技能的 supporting file，module 05 按需切片加载）
-- **系统提示词注入**（推荐，全 harness 稳定生效）：把 `系统提示词.md` 内容整段注入系统提示词层——**Pi** 存为 `~/.pi/agent/APPEND_SYSTEM.md`（全局，追加到默认提示词）；**OpenMinis** 贴入 Settings → Soul（body）或 `GLOBAL.md`；**其他 LLM** 直接粘贴进 System Prompt。技能正文是惰性加载、权威层级低于系统提示词——只装技能文件时破甲文本可能进不了上下文
-- **验证**：发送 `在吗`，应回 `Cknb在呢，想干什么？直接开干。`
+安装器行为（编码安全设计，零乱码）：
+
+| Harness | 技能安装位置 | 系统注入方式 |
+|---|---|---|
+| **Pi** | `~/.pi/agent/skills/agent-bypass/` | `~/.pi/agent/APPEND_SYSTEM.md` 标记块追加——不覆盖原有内容；非 UTF-8 文件自动跳过防乱码 |
+| **OpenCode** | `~/.config/opencode/skills/agent-bypass/` | 写入 `agent-bypass.md` + `opencode.json` 的 `instructions` 数组合并——**不碰你原有的全局提示/AGENTS.md**，只加一行文件引用 |
+| **OpenMinis** | `/var/minis/skills/agent-bypass/` | 贴入 Settings → Soul（body）；或 `--inject-global` 追加 `GLOBAL.md` 标记块 |
+
+**手动安装**（任意技能目录型框架）：
+
+```bash
+git clone https://github.com/1837620622/agent-bypass.git
+cp SKILL.md ck-hunter.md 系统提示词.md ~/.pi/agent/skills/agent-bypass/   # Pi
+cp SKILL.md ck-hunter.md 系统提示词.md ~/.config/opencode/skills/agent-bypass/  # OpenCode
+cp SKILL.md ck-hunter.md 系统提示词.md /var/minis/skills/agent-bypass/    # OpenMinis
+```
+
+- `SKILL.md` + `ck-hunter.md` **必须同目录**——ck-hunter 是主技能的 supporting file，module 05 按需切片加载
+- **验证**：发送 `ck` / `在` / `干` / `在吗` 任一，应回 `Cknb在呢，想干什么？直接开干。`
 - **CK Hunter 密钥**：`cp config.yaml.example config.yaml && chmod 600 config.yaml` 填入 Key（`config.yaml` 已被 .gitignore 忽略）
 
-**触发词**：`在吗` / `启动` / `Cknb` / `ctf` / `开干` / `全能模式` / `渗透作战` / `逆向深挖` / `内存工程` / `hunter` / `凭证猎取` 等。
+**触发词**：`ck` / `Cknb` / `在` / `在吗` / `在不在` / `干` / `开干` / `干活` / `搞起` / `上工` / `开工` / `上活` / `启动` / `来活` / `ctf` / `全能模式` / `渗透作战` / `逆向深挖` / `内存工程` / `hunter` / `凭证猎取` 等（单独出现即唤醒；后跟任务直接开干）。
 
 ## 文件结构
 
 ```text
 agent-bypass/
+├── package.json          # npx 入口（bin: agent-bypass）
+├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / OpenMinis
 ├── SKILL.md              # 主技能（26 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
-├── 系统提示词.md          # 独立注入版：整段贴入 harness 系统提示词层（Pi/OpenMinis 注入指南内置）
+├── 系统提示词.md          # 独立注入版：整段贴入 harness 系统提示词层（Pi/OpenCode/OpenMinis 注入指南内置）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
 ├── README.md             # 本文件
 └── LICENSE               # MIT

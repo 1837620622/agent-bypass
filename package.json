@@ -1,0 +1,29 @@
+{
+  "name": "agent-bypass",
+  "version": "2.2.0",
+  "description": "Cknb 全能技术操作员 — Agent Skills 技能包（自动安装到 Pi / OpenCode / OpenMinis）",
+  "bin": {
+    "agent-bypass": "bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "ck-hunter.md",
+    "系统提示词.md",
+    "config.yaml.example",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "agent-skills",
+    "pi",
+    "opencode",
+    "openminis",
+    "security",
+    "pentest"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
