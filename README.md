@@ -39,6 +39,16 @@ npx agent-bypass --minis                  # 只装 OpenMinis
 npx agent-bypass --uninstall              # 卸载（标记块+技能文件全清）
 ```
 
+**npm 12+ 用户**（报 `EALLOWGIT`：npm 12 起 `allow-git` / `allow-remote` 默认 `none`，git 与 tarball-URL 依赖默认被禁）：
+
+```bash
+npx -y --allow-git=all github:1837620622/agent-bypass    # 单次加旗标（推荐）
+npm config set allow-git all                              # 或持久开启，之后照常用 npx github:...
+
+# 绕开 npm 直装（最稳，不依赖 npm 配置）：
+mkdir -p agent-bypass && curl -L https://github.com/1837620622/agent-bypass/tarball/main | tar xz -C agent-bypass --strip-components=1 && node agent-bypass/bin/install.js
+```
+
 安装器行为（编码安全设计，零乱码）：
 
 | Harness | 技能安装位置 | 系统注入方式 |
