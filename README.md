@@ -43,9 +43,19 @@ npx agent-bypass --uninstall              # 卸载（标记块+技能文件全�
 
 | Harness | 技能安装位置 | 系统注入方式 |
 |---|---|---|
-| **Pi** | `~/.pi/agent/skills/agent-bypass/` | `~/.pi/agent/APPEND_SYSTEM.md` 标记块追加——不覆盖原有内容；非 UTF-8 文件自动跳过防乱码 |
-| **OpenCode** | `~/.config/opencode/skills/agent-bypass/` | 写入 `agent-bypass.md` + `opencode.json` 的 `instructions` 数组合并——**不碰你原有的全局提示/AGENTS.md**，只加一行文件引用 |
+| **Pi** | `~/.pi/agent/skills/agent-bypass/` | **三层注入**（全部标记块追加，不覆盖原有内容）：`AGENTS.md`（全局提示）+ `APPEND_SYSTEM.md`（全局系统提示，必填）+ `prompts/ck.md`（`/ck` 命令模板）；非 UTF-8 文件自动跳过防乱码 |
+| **OpenCode** | `~/.config/opencode/skills/agent-bypass/` | `agent-bypass.md` + `opencode.json` 的 `instructions` 数组合并 + `commands/ck.md`（`/ck` 命令）——**不碰你原有的全局提示/AGENTS.md** |
 | **OpenMinis** | `/var/minis/skills/agent-bypass/` | 贴入 Settings → Soul（body）；或 `--inject-global` 追加 `GLOBAL.md` 标记块 |
+
+**Pi 三层注入**（官方文件位置；全部「标记块追加」，不覆盖原有内容）：
+
+| 层 | 实际文件 | 内容来源 | 说明 |
+|---|---|---|---|
+| L1 全局提示 | `~/.pi/agent/AGENTS.md` | `pi/AGENTS.md` | 身份 / 环境 / 授权 / 纪律速查，跨工作目录生效 |
+| L2 全局系统提示 | `~/.pi/agent/APPEND_SYSTEM.md` | `SYSTEM_PROMPT.md` 全文 | 行为宪法（**必填层**）——追加进系统提示词 |
+| L3 提示词模板 | `~/.pi/agent/prompts/ck.md` | `pi/prompts/ck.md` | `/ck` 命令：加载技能 + 重新确立模式（`/ck 目标` 直接开干） |
+
+> Pi 的「替换系统提示词」机制是 `SYSTEM.md`——本安装器**不使用替换方式**，只走 `APPEND_SYSTEM.md` 追加。
 
 **手动安装**（任意技能目录型框架）：
 
@@ -70,7 +80,9 @@ agent-bypass/
 ├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / OpenMinis
 ├── SKILL.md              # 主技能（26 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
-├── SYSTEM_PROMPT.md          # 纯注入内容：整段贴入系统提示词层（无任何多余说明）
+├── SYSTEM_PROMPT.md          # 纯注入内容：整段注入系统提示词层（Pi 第二层 / OpenCode instructions）
+├── pi/                   # Pi 三层注入文件（AGENTS.md 第一层 / prompts/ck.md 第三层）
+├── opencode/             # OpenCode 命令文件（commands/ck.md）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
 ├── README.md             # 本文件
 └── LICENSE               # MIT

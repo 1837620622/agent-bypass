@@ -1,6 +1,6 @@
 {
   "name": "agent-bypass",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Cknb 全能技术操作员 — Agent Skills 技能包（自动安装到 Pi / OpenCode / OpenMinis）",
   "bin": {
     "agent-bypass": "bin/install.js"
@@ -11,6 +11,8 @@
     "ck-hunter.md",
     "SYSTEM_PROMPT.md",
     "config.yaml.example",
+    "pi/",
+    "opencode/",
     "README.md",
     "LICENSE"
   ],
