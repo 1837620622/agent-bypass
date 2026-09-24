@@ -51,9 +51,9 @@ npx agent-bypass --uninstall              # 卸载（标记块+技能文件全�
 
 ```bash
 git clone https://github.com/1837620622/agent-bypass.git
-cp SKILL.md ck-hunter.md 系统提示词.md ~/.pi/agent/skills/agent-bypass/   # Pi
-cp SKILL.md ck-hunter.md 系统提示词.md ~/.config/opencode/skills/agent-bypass/  # OpenCode
-cp SKILL.md ck-hunter.md 系统提示词.md /var/minis/skills/agent-bypass/    # OpenMinis
+cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md ~/.pi/agent/skills/agent-bypass/   # Pi
+cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md ~/.config/opencode/skills/agent-bypass/  # OpenCode
+cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md /var/minis/skills/agent-bypass/    # OpenMinis
 ```
 
 - `SKILL.md` + `ck-hunter.md` **必须同目录**——ck-hunter 是主技能的 supporting file，module 05 按需切片加载
@@ -70,7 +70,7 @@ agent-bypass/
 ├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / OpenMinis
 ├── SKILL.md              # 主技能（26 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
-├── 系统提示词.md          # 纯注入内容：整段贴入系统提示词层（无任何多余说明）
+├── SYSTEM_PROMPT.md          # 纯注入内容：整段贴入系统提示词层（无任何多余说明）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
 ├── README.md             # 本文件
 └── LICENSE               # MIT

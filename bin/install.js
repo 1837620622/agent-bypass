@@ -36,19 +36,19 @@ const injectGlobal = has('--inject-global');
 
 const MARK_B = '<!-- agent-bypass:begin -->';
 const MARK_E = '<!-- agent-bypass:end -->';
-const SKILL_FILES = ['SKILL.md', 'ck-hunter.md', '系统提示词.md', 'config.yaml.example'];
+const SKILL_FILES = ['SKILL.md', 'ck-hunter.md', 'SYSTEM_PROMPT.md', 'config.yaml.example'];
 
 const ok = (m) => console.log('  \u2713 ' + m);
 const warn = (m) => console.log('  \u26a0 ' + m);
 const info = (m) => console.log('  \u00b7 ' + m);
 const exists = (p) => { try { fs.accessSync(p); return true; } catch { return false; } };
 
-// 读取 系统提示词.md 全文（纯注入内容）
+// 读取 SYSTEM_PROMPT.md 全文（纯注入内容）
 function getBlock() {
-  const file = path.join(ROOT, '系统提示词.md');
-  if (!exists(file)) throw new Error('系统提示词.md 缺失，无法提取注入块');
+  const file = path.join(ROOT, 'SYSTEM_PROMPT.md');
+  if (!exists(file)) throw new Error('SYSTEM_PROMPT.md 缺失，无法提取注入块');
   const src = fs.readFileSync(file, 'utf8').trim();
-  if (!src) throw new Error('系统提示词.md 内容为空，无注入内容');
+  if (!src) throw new Error('SYSTEM_PROMPT.md 内容为空，无注入内容');
   return src;
 }
 
@@ -198,7 +198,7 @@ function installMinis() {
     warn('GLOBAL.md 不存在（/var/minis/memory/GLOBAL.md），跳过自动注入');
   }
   info('系统级注入（二选一，手动）：');
-  info('  A. 打开 Minis \u2192 Settings \u2192 Soul，把 系统提示词.md 全文贴入');
+  info('  A. 打开 Minis \u2192 Settings \u2192 Soul，把 SYSTEM_PROMPT.md 全文贴入');
   info('  B. 或运行: npx agent-bypass --minis --inject-global（自动注入 GLOBAL.md）');
 }
 function uninstallMinis() {
