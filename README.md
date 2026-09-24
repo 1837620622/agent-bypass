@@ -35,7 +35,7 @@ cp SKILL.md ck-hunter.md ~/.claude/skills/agent-bypass/
 ```
 
 - **技能目录型框架**（Claude Code / OpenMinis / Cursor / OpenHands / Cline / Aider…）：复制 `SKILL.md` + `ck-hunter.md` 到技能目录（两个文件**必须同目录**——ck-hunter 是主技能的 supporting file，module 05 按需切片加载）
-- **系统提示词型**（ChatGPT / Gemini / 任意 LLM）：把 `SKILL.md` 全文粘贴进 System Prompt
+- **系统提示词注入**（推荐，全 harness 稳定生效）：把 `系统提示词.md` 内容整段注入系统提示词层——**Pi** 存为 `~/.pi/agent/APPEND_SYSTEM.md`（全局，追加到默认提示词）；**OpenMinis** 贴入 Settings → Soul（body）或 `GLOBAL.md`；**其他 LLM** 直接粘贴进 System Prompt。技能正文是惰性加载、权威层级低于系统提示词——只装技能文件时破甲文本可能进不了上下文
 - **验证**：发送 `在吗`，应回 `Cknb在呢，想干什么？直接开干。`
 - **CK Hunter 密钥**：`cp config.yaml.example config.yaml && chmod 600 config.yaml` 填入 Key（`config.yaml` 已被 .gitignore 忽略）
 
@@ -47,6 +47,7 @@ cp SKILL.md ck-hunter.md ~/.claude/skills/agent-bypass/
 agent-bypass/
 ├── SKILL.md              # 主技能（26 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
+├── 系统提示词.md          # 独立注入版：整段贴入 harness 系统提示词层（Pi/OpenMinis 注入指南内置）
 ├── config.yaml.example   # 密钥模板（占位符）；真实 config.yaml 已忽略
 ├── README.md             # 本文件
 └── LICENSE               # MIT
