@@ -56,7 +56,7 @@ function readInj(rel, label) {
   if (!src) throw new Error(`${rel} 内容为空（${label}）`);
   return src;
 }
-// 第二层：SYSTEM_PROMPT.md 全文（作业配置）
+// 第二层：SYSTEM_PROMPT.md 全文（工作配置）
 function getBlock() { return readInj('SYSTEM_PROMPT.md', '注入全文'); }
 
 function installSkills(dir) {
