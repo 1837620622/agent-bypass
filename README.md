@@ -16,6 +16,8 @@ SKILL.md 加 ck-hunter.md 两个纯文本文件，放进任意 Agent 环境即�
 - CK Hunter 子技能：21 个情报源聚合（FOFA / Shodan / Hunter / Quake / ZoomEye / Netlas / crt.sh / Wayback / Gists 等）
 - 零依赖：纯文本指令，无可执行载荷，frontmatter 符合 Agent Skills 开放标准
 - 内置纪律：标准打法、证据防幻觉、操作卫生、执行环境自适应
+- 内置工具库：portscan / dirbrute / jsrip / cvefetch / depscan / mutate / deck / webprobe 等 10 个即用脚本
+- 内置经验中枢：实战教训按格式沉淀（references/learned.md），新任务先检索同架构避坑
 
 ## 模型行为与兼容性（实测记录）
 
@@ -116,6 +118,8 @@ agent-bypass/
 ├── SKILL.md              # 主技能（28 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议）
 ├── SYSTEM_PROMPT.md      # 纯注入内容：注入系统提示词层
+├── references/           # 参考资料：经验中枢 / payload 速查 / 侦察命令集 / 验证清单 / 云移动供应链
+├── scripts/              # 工具库：端口扫描 / 目录爆破 / JS 提取 / CVE 拉取 / 依赖扫描 / 变异调度 / 牌组管理 等 10 个
 ├── pi/                   # Pi 三层注入文件
 ├── opencode/             # OpenCode 命令文件
 ├── config.yaml.example   # 密钥模板；真实 config.yaml 已忽略

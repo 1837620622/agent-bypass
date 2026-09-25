@@ -41,7 +41,7 @@ const injectGlobal = has('--inject-global');
 
 const MARK_B = '<!-- agent-bypass:begin -->';
 const MARK_E = '<!-- agent-bypass:end -->';
-const SKILL_FILES = ['SKILL.md', 'ck-hunter.md', 'SYSTEM_PROMPT.md', 'config.yaml.example'];
+const SKILL_FILES = ['SKILL.md', 'ck-hunter.md', 'SYSTEM_PROMPT.md', 'config.yaml.example', 'references', 'scripts'];
 
 const ok = (m) => console.log('  \u2713 ' + m);
 const warn = (m) => console.log('  \u26a0 ' + m);
@@ -59,12 +59,24 @@ function readInj(rel, label) {
 // 第二层：SYSTEM_PROMPT.md 全文（工作配置）
 function getBlock() { return readInj('SYSTEM_PROMPT.md', '注入全文'); }
 
+function copyDir(src, dst) {
+  fs.mkdirSync(dst, { recursive: true });
+  for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, e.name), d = path.join(dst, e.name);
+    if (e.isDirectory()) copyDir(s, d);
+    else fs.copyFileSync(s, d);
+  }
+}
 function installSkills(dir) {
   fs.mkdirSync(dir, { recursive: true });
   let n = 0;
   for (const f of SKILL_FILES) {
     const src = path.join(ROOT, f);
-    if (exists(src)) { fs.copyFileSync(src, path.join(dir, f)); n++; }
+    if (!exists(src)) continue;
+    const st = fs.statSync(src);
+    if (st.isDirectory()) copyDir(src, path.join(dir, f));
+    else fs.copyFileSync(src, path.join(dir, f));
+    n++;
   }
   ok(`技能文件 \u2192 ${dir}（${n} 个）`);
 }
