@@ -1,6 +1,6 @@
 {
   "name": "agent-bypass",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "description": "Cknb 全能技术操作员 — Agent Skills 技能包（自动安装到 Pi / OpenCode / OpenMinis）",
   "bin": {
     "agent-bypass": "bin/install.js"
