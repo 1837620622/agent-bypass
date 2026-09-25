@@ -2,16 +2,20 @@
 'use strict';
 
 /**
- * agent-bypass installer — 自动安装到 Pi / OpenCode / OpenMinis
+ * agent-bypass installer — 自动安装到 Pi / OpenCode / Claude Code / OpenMinis
  *
  * 用法:
  *   npx agent-bypass                 自动检测并安装到已装的 harness
  *   npx agent-bypass --pi            只装 Pi（三层注入：AGENTS.md + APPEND_SYSTEM.md + prompts/ck.md）
  *   npx agent-bypass --opencode      只装 OpenCode（instructions 注入 + commands/ck.md）
+ *   npx agent-bypass --claude        只装 Claude Code（~/.claude/skills/，自动发现）
  *   npx agent-bypass --minis         只装 OpenMinis
  *   npx agent-bypass --no-inject     只装技能文件，跳过系统提示词注入
- *   npx agent-bypass --inject-global OpenMinis 也注入 GLOBAL.md（默认仅提示手动）
+ *   npx agent-bypass --inject-global 也注入全局文件（Claude Code 的 CLAUDE.md / OpenMinis 的 GLOBAL.md）
  *   npx agent-bypass --uninstall     卸载（移除技能 + 标记块 + instructions 条目）
+ *
+ * 覆盖安装：重装时会先清掉本安装器管理的全部文件（含历史版本遗留：PLAYBOOK.md / eval 等），
+ * 再拷贝新版本——保证技能目录与当前版本完全一致；用户自己的文件（config.yaml 等）永不触碰。
  *
  * 防乱码设计:
  *   1. 所有新建文件一律 UTF-8（无 BOM）
@@ -34,7 +38,7 @@ const ROOT = path.join(__dirname, '..');
 const HOME = os.homedir();
 const args = process.argv.slice(2);
 const has = (f) => args.includes(f);
-const only = ['--pi', '--opencode', '--minis'].filter(has);
+const only = ['--pi', '--opencode', '--claude', '--minis'].filter(has);
 const noInject = has('--no-inject');
 const uninstall = has('--uninstall');
 const injectGlobal = has('--inject-global');
@@ -42,6 +46,8 @@ const injectGlobal = has('--inject-global');
 const MARK_B = '<!-- agent-bypass:begin -->';
 const MARK_E = '<!-- agent-bypass:end -->';
 const SKILL_FILES = ['SKILL.md', 'ck-hunter.md', 'SYSTEM_PROMPT.md', 'config.yaml.example', 'references', 'scripts'];
+// 本安装器管理的全部文件/目录（含历史遗留）——重装时先清再拷，保证干净覆盖；用户自有文件（config.yaml）不在其中
+const MANAGED = ['SKILL.md', 'ck-hunter.md', 'SYSTEM_PROMPT.md', 'config.yaml.example', 'references', 'scripts', 'PLAYBOOK.md', 'eval'];
 
 const ok = (m) => console.log('  \u2713 ' + m);
 const warn = (m) => console.log('  \u26a0 ' + m);
@@ -69,6 +75,12 @@ function copyDir(src, dst) {
 }
 function installSkills(dir) {
   fs.mkdirSync(dir, { recursive: true });
+  // 干净覆盖：先清掉我方管理的旧文件（含已废弃文件名），保留用户文件
+  let cleaned = 0;
+  for (const f of MANAGED) {
+    const p = path.join(dir, f);
+    if (exists(p)) { fs.rmSync(p, { recursive: true, force: true }); cleaned++; }
+  }
   let n = 0;
   for (const f of SKILL_FILES) {
     const src = path.join(ROOT, f);
@@ -78,7 +90,7 @@ function installSkills(dir) {
     else fs.copyFileSync(src, path.join(dir, f));
     n++;
   }
-  ok(`技能文件 \u2192 ${dir}（${n} 个）`);
+  ok(`技能文件 \u2192 ${dir}（覆盖 ${n} 项${cleaned ? `，清理旧文件 ${cleaned} 项` : ''}）`);
 }
 
 function removeSkills(dir) {
@@ -233,6 +245,25 @@ function uninstallOpenCode() {
   }
 }
 
+// ============ Claude Code ============
+// skills: ~/.claude/skills/agent-bypass/（Claude Code 自动发现）
+// 注入（可选）: ~/.claude/CLAUDE.md 标记块
+function installClaude() {
+  console.log('\n[Claude Code]');
+  const base = path.join(HOME, '.claude');
+  installSkills(path.join(base, 'skills', 'agent-bypass'));
+  if (injectGlobal) {
+    injectMarked(path.join(base, 'CLAUDE.md'), getBlock(), 'Claude Code CLAUDE.md');
+    return;
+  }
+  info('技能已装到 ~/.claude/skills/，Claude Code 会自动发现；如需系统级注入：npx agent-bypass --claude --inject-global');
+}
+function uninstallClaude() {
+  console.log('\n[Claude Code]');
+  removeSkills(path.join(HOME, '.claude', 'skills', 'agent-bypass'));
+  stripMarked(path.join(HOME, '.claude', 'CLAUDE.md'), 'Claude Code CLAUDE.md');
+}
+
 // ============ OpenMinis ============
 // skills: /var/minis/skills/agent-bypass/
 // 系统注入: 默认提示手动（Settings \u2192 Soul / GLOBAL.md）；--inject-global 时标记块注入 GLOBAL.md
@@ -263,6 +294,7 @@ console.log('\u2500'.repeat(40));
 
 const detectPi = exists(path.join(HOME, '.pi'));
 const detectOc = exists(path.join(HOME, '.config', 'opencode'));
+const detectClaude = exists(path.join(HOME, '.claude'));
 const detectMinis = exists('/var/minis');
 
 let targets;
@@ -272,13 +304,15 @@ if (only.length) {
   targets = [];
   if (detectPi) targets.push('pi');
   if (detectOc) targets.push('opencode');
+  if (detectClaude) targets.push('claude');
   if (detectMinis) targets.push('minis');
   if (!targets.length) {
     warn('未检测到任何目标 harness：');
     info('Pi: ~/.pi 不存在');
     info('OpenCode: ~/.config/opencode 不存在');
+    info('Claude Code: ~/.claude 不存在');
     info('OpenMinis: /var/minis 不存在');
-    info('强制安装指定目标: npx agent-bypass --pi | --opencode | --minis');
+    info('强制安装指定目标: npx agent-bypass --pi | --opencode | --claude | --minis');
     process.exit(1);
   }
   console.log(`检测到: ${targets.join(' / ')}`);
@@ -287,6 +321,7 @@ if (only.length) {
 const map = {
   pi: [installPi, uninstallPi],
   opencode: [installOpenCode, uninstallOpenCode],
+  claude: [installClaude, uninstallClaude],
   minis: [installMinis, uninstallMinis],
 };
 let failed = 0;
