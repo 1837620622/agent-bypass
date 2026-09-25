@@ -114,7 +114,7 @@ cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md /var/minis/skills/agent-bypass/    # O
 ```text
 agent-bypass/
 ├── package.json          # npx 入口（bin: agent-bypass）
-├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / OpenMinis
+├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / Claude Code / OpenMinis（覆盖式更新）
 ├── SKILL.md              # 主技能（28 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议）
 ├── SYSTEM_PROMPT.md      # 纯注入内容：注入系统提示词层
