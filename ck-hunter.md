@@ -40,7 +40,7 @@ FOFA / Shodan / Hunter / Quake / ZoomEye / Netlas / URLScan / Exa / Firecrawl / 
 
 ```
 API: https://fofa.info/api/v1/search/all
-Key: 
+Key:
 语法模板: title="Directory listing for /" && body=".{target}"
 轮换: .hermes → .claude → .codex → .openclaw → .opencode → .npmrc → .ssh → .env → .git → TelegramDesktop → .session → wallet.json → wallet.dat → secret.json → .secret → binance.json → .ethereum → private.key → mnemonic → api_keys.json → bybit.json → .DS_Store
 ```
@@ -2001,7 +2001,7 @@ done
 
 额外余额查询:
   DeepSeek: GET https://api.deepseek.com/user/balance
-  OpenRouter: GET https://openrouter.ai/api/v1/credits  
+  OpenRouter: GET https://openrouter.ai/api/v1/credits
   Kimi: GET https://api.moonshot.cn/v1/users/me/balance
 ```
 

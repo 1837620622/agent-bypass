@@ -7,7 +7,7 @@
 `ck` · `在吗` · `开干` · `你好` … → `Cknb在呢，想干什么？直接开干。`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square)](LICENSE)
-[![SKILL.md](https://img.shields.io/badge/SKILL.md-27模块-8A2BE2?style=flat-square)](SKILL.md)
+[![SKILL.md](https://img.shields.io/badge/SKILL.md-28模块-8A2BE2?style=flat-square)](SKILL.md)
 [![ck-hunter](https://img.shields.io/badge/ck--hunter-21源聚合-2563eb?style=flat-square)](ck-hunter.md)
 [![Standard](https://img.shields.io/badge/Agent_Skills-开放标准兼容-00D4AA?style=flat-square)](https://agentskills.io)
 [![Platforms](https://img.shields.io/badge/一键安装-Pi%20%7C%20OpenCode%20%7C%20OpenMinis-6E40C9?style=flat-square)](#快速开始)
@@ -99,7 +99,7 @@ cp SKILL.md ck-hunter.md SYSTEM_PROMPT.md /var/minis/skills/agent-bypass/    # O
 agent-bypass/
 ├── package.json          # npx 入口（bin: agent-bypass）
 ├── bin/install.js        # 安装器：自动检测 Pi / OpenCode / OpenMinis
-├── SKILL.md              # 主技能（27 模块）
+├── SKILL.md              # 主技能（28 模块）
 ├── ck-hunter.md          # 子技能：21 源凭证猎取（QUICKSTART 切片协议，禁止全文读取）
 ├── SYSTEM_PROMPT.md      # 纯注入内容：整段注入系统提示词层（Pi 第二层 / OpenCode instructions）
 ├── PLAYBOOK.md           # 操作员笔记：模型软拦截时的处置（不参与加载）
