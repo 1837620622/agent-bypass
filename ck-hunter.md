@@ -965,7 +965,7 @@ if [ "$LEAKIX_SKIP" -eq 0 ]; then for TOOL in hermes claude codex openclaw openc
   if [ -n "$LEAKIX_KEY" ]; then HDR="-H \"api-key: ${LEAKIX_KEY}\""; else HDR=""; fi
   RESP=$(curl -s --max-time 30 -G "https://leakix.net/search" --data-urlencode "scope=leak" --data-urlencode "q=${LQUERY}" $([ -n "$LEAKIX_KEY" ] && echo "-H" && echo "api-key: ${LEAKIX_KEY}") 2>/dev/null)
   # LeakIX 返回 JSON 数组，需包装
-  echo "$RESP" | python3 -c "import json,sys; d=json.load(sys.stdin) if sys.stdin.read(1) else []; print(json.dumps(d))" > "hunt/csv/${TOOL}_leakix.json" 2>/dev/null || echo "$RESP" > "hunt/csv/${TOOL}_leakix.json"
+  echo "$RESP" | python3 -c "import json,sys; s=sys.stdin.read(); d=json.loads(s) if s.strip() else []; print(json.dumps(d))" > "hunt/csv/${TOOL}_leakix.json" 2>/dev/null || echo "$RESP" > "hunt/csv/${TOOL}_leakix.json"
   N=$(python3 -c "import json;print(len(json.load(open('hunt/csv/${TOOL}_leakix.json',encoding='utf-8',errors='ignore'))))" 2>/dev/null)
   echo "[LEAKIX] $TOOL: ${N:-0} 条"
   sleep 1
@@ -1443,7 +1443,7 @@ cut -d/ -f3 /tmp/unique_hosts.txt 2>/dev/null | cut -d: -f1 | grep -E '^[0-9]+\.
   else
     RESP=$(curl -s --max-time 8 "https://api.greynoise.io/v3/community/${IP}" 2>/dev/null)
   fi
-  echo "$RESP" | python3 -c "import json,sys;ip=sys.argv[1];d=json.load(sys.stdin);print(f'{ip}|{d.get("classification","unknown")}|{d.get("name","")}')" "$IP" 2>/dev/null >> /tmp/greynoise_enrich.txt
+  echo "$RESP" | python3 -c "import json,sys;ip=sys.argv[1];d=json.load(sys.stdin);print('%s|%s|%s'%(ip,d.get('classification','unknown'),d.get('name','')))" "$IP" 2>/dev/null >> /tmp/greynoise_enrich.txt
   sleep 1
 done
 cat /tmp/greynoise_enrich.txt 2>/dev/null | python3 -c "

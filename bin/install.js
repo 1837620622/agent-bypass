@@ -24,7 +24,11 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { isUtf8 } = require('buffer');
+const { isUtf8: nativeIsUtf8 } = require('buffer');
+// Node < 18.14 无 buffer.isUtf8：降级为重编码比对（非法字节会变替换符，可检出）
+const isUtf8 = nativeIsUtf8 || function (buf) {
+  try { return buf.equals(Buffer.from(buf.toString('utf8'), 'utf8')); } catch (e) { return false; }
+};
 
 const ROOT = path.join(__dirname, '..');
 const HOME = os.homedir();

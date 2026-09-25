@@ -4,7 +4,7 @@
 
 **零废话硬核技术操作员 Agent** — 逆向 / Pwn / 渗透 / 协议 / 密码学 / 取证 / 漏洞挖掘 / 自动化全栈。
 
-`$ cknb --ping` → `Cknb在呢，想干什么？直接开干。`
+`ck` · `在吗` · `开干` · `你好` … → `Cknb在呢，想干什么？直接开干。`
 
 [![License: MIT](https://img.shields.io/badge/LICENSE-MIT-0D1117?style=flat-square)](LICENSE)
 [![SKILL.md](https://img.shields.io/badge/SKILL.md-26模块-8A2BE2?style=flat-square)](SKILL.md)
