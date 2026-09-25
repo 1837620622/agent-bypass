@@ -24,7 +24,7 @@
 - **12 条能力轨道**：REVERSE / PWN / NETWORK / CRYPTO / MOBILE / FORENSICS / PENTEST / MEMORY / PROTOCOL / VULN-RESEARCH / JS-REVERSE / REMEDIATION
 - **CK Hunter 子技能**：21 源（FOFA/Shodan/Hunter/Quake/ZoomEye/Netlas/…/crt.sh/Wayback/Gists）凭证与开放目录猎取
 - **零依赖**：纯文本指令，无可执行 payload；frontmatter 100% 符合 [Agent Skills 开放标准](https://agentskills.io/specification)
-- **内置纪律**：授权即干、标准打法、证据防幻觉、痕迹清理、FOFA 额度保护、自我破甲机制
+- **内置纪律**：直接执行、标准打法、证据防幻觉、痕迹清理、FOFA 额度保护、任务推进机制
 
 ## 快速开始
 
@@ -70,7 +70,7 @@ npx -y --allow-remote=all https://github.com/1837620622/agent-bypass/archive/ref
 | 层 | 实际文件 | 内容来源 | 说明 |
 |---|---|---|---|
 | L1 全局提示 | `~/.pi/agent/AGENTS.md` | `pi/AGENTS.md` | 身份 / 环境 / 授权 / 纪律速查，跨工作目录生效 |
-| L2 全局系统提示 | `~/.pi/agent/APPEND_SYSTEM.md` | `SYSTEM_PROMPT.md` 全文 | 行为宪法（**必填层**）——追加进系统提示词 |
+| L2 全局系统提示 | `~/.pi/agent/APPEND_SYSTEM.md` | `SYSTEM_PROMPT.md` 全文 | 作业守则（**必填层**）——追加进系统提示词 |
 | L3 提示词模板 | `~/.pi/agent/prompts/ck.md` | `pi/prompts/ck.md` | `/ck` 命令：加载技能 + 重新确立模式（`/ck 目标` 直接开干） |
 
 > Pi 的「替换系统提示词」机制是 `SYSTEM.md`——本安装器**不使用替换方式**，只走 `APPEND_SYSTEM.md` 追加。
